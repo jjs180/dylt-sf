@@ -1,0 +1,40 @@
+<apex:component controller="MonthlyShipmentController" id="monthlyShipment">
+
+    <apex:attribute name="acctId" type="String" description="this is the owner of the opp" assignTo="{!AccountId}" access="public"/>
+    <apex:attribute name="year" type="String" description="this is the year of the opp" assignTo="{!currentYear}" access="public"/>
+    <apex:attribute name="quarter" type="String" description="this is the quarter of the opp" assignTo="{!CurrentQuarter}" access="public"/>
+    <apex:includeScript value="https://www.google.com/jsapi"/>
+    <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            google.setOnLoadCallback(drawChart);
+            function drawChart() {          
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.MonthlyShipmentController.getMonthlyShipment}',
+            "{!AccountId}","{!currentYear}","{!CurrentQuarter}", 
+            function(result, event){
+                if (event.status) {
+                  var data = google.visualization.arrayToDataTable([
+                    ['Appointed Delivery Start', 'Record Count'],
+                    [result[0].month + " {!currentYear}",  result[0].count],
+                    [result[1].month + " {!currentYear}",  result[1].count],
+                    [result[2].month + " {!currentYear}",  result[2].count]
+                  ]);  
+                  var options = {
+                    title: 'Monthly Shipment',
+                    width: 360,
+                    height: 360,
+                    hAxis: {title: 'Month', titleTextStyle: {color: 'red'}}
+                  };
+        
+                  var chart = new google.visualization.ColumnChart(document.getElementById('MonthlyShipment_chart'));
+        
+                  chart.draw(data, options);
+                } 
+            }, 
+            {escape: true}
+        );          
+        }
+
+    </script>
+    <div id="MonthlyShipment_chart"></div>   
+</apex:component>

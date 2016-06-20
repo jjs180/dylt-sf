@@ -1,0 +1,40 @@
+<apex:component >
+<div id="DirectorTeamSupernovaView" class="row" style="display:none;padding:2em 2em 2em 2em;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div id="DR_SuperNova_Dir_Tabular" class="loadingChart"></div>
+                </div>
+            </div>
+        </div> 
+        
+<script type="text/javascript">
+    
+     var directorTeamSupernovaReports = new Array(
+        {
+            name : 'Team_SuperNova_Dir_Tabular', 
+            renderTo: 'DR_SuperNova_Dir_Tabular',
+            instanceId: null,
+            rowLimit: 0,
+            sortOrder: 'asc',
+            sortColumnNumber: 8,
+            sortColumnName: '',
+            visualizationType: 'table',
+            displayUserPhoto: false,
+            showTableHeading: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Avg Quota Score', type: 'number', isVisible: true, order: 2},
+                        {name: 'Supernova__c.Pipeline_Score__c', label: 'Avg Pipeline Score', type: 'number', isVisible: true, order: 3},
+                        {name: 'Supernova__c.Shipper_Score__c', label: 'Avg Shipper Score', type: 'number', isVisible: true, order: 4},
+                        {name: 'Supernova__c.Quality_Score__c', label: 'Avg Quality Score', type: 'number', isVisible: true, order: 5},
+                        {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Avg Specialty Services Score', type: 'number', isVisible: true, order: 6},
+                        {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Avg Gauge The Web Score', type: 'number', isVisible: true, order: 7},
+                        {name: 'Supernova__c.Total_Score__c', label: 'Avg Total Score', type: 'number', isVisible: true, order: 8},
+                        {name: 'Supernova__c.Total_Score_Rank__c', label: 'Rank', type: 'number', isVisible: true, order: 9},                           
+                   		{name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 10}
+                    ]
+       });
+       
+
+</script>
+</apex:component>

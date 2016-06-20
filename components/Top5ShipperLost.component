@@ -1,0 +1,40 @@
+<apex:component controller="Top5ShippersLostController">
+  <apex:attribute name="reportFilters" type="String" description="this is the report filter of the dashboard" assignTo="{!ReportFIlter}" access="public"/>
+  <apex:includeScript value="https://www.google.com/jsapi"/>
+    <script type="text/javascript">
+            google.load("visualization", "1", {packages:["table"]});
+      google.setOnLoadCallback(drawConsigneesLost);
+
+            function drawConsigneesLost() {          
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.Top5ShippersLostController.getTop5Shippers}',
+            '{!ReportFIlter}',
+            function(result, event){
+                if (event.status) {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Shipper Name');
+                  data.addColumn('string', 'State');
+                  data.addColumn('number', 'Revenue');
+                  var tablerows = [];
+                  for(var i = 0; i < result.length; i ++)
+                  {
+                     tablerows[i] = [result[i].ShipperName, result[i].ShiperState, result[i].PaidAmount]; 
+                  }
+                  data.addRows(tablerows);
+                  //alert(tablerows[0]);
+                  //alert(tablerows[1]);
+                  var formatter = new google.visualization.NumberFormat(
+         {negativeColor: 'red', negativeParens: true, pattern: '$###,###'});
+        formatter.format(data, 2); 
+                  var table = new google.visualization.Table(document.getElementById('table_divTop5ShipperLost'));
+                  table.draw(data, {showRowNumber: true});
+
+                } 
+            }, 
+            {escape: true}
+        );          
+        }
+
+    </script>
+    <div id="table_divTop5ShipperLost"></div>  
+</apex:component>

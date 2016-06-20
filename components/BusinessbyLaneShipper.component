@@ -1,0 +1,50 @@
+<apex:component controller="BusinessbyLaneShipperControlelr">
+    <apex:attribute name="reportFilters" type="String" description="this is the report filter of the dashboard" assignTo="{!ReportFIlter}" access="public"/>
+    <apex:includeScript value="https://www.google.com/jsapi"/>
+    
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["geochart"]});
+        google.setOnLoadCallback(drawChart);
+
+        function drawChart() {     
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.BusinessbyLaneShipperControlelr.getShippers}',
+                {!ReportFIlter},
+                function(result, event){
+                    if (event.status) {
+                 
+                        var datarows = [];
+                        datarows[0] = ['State',   'Revenue'];
+                        for(var i = 1; i <= result.length; i ++) {
+                            datarows[i] = [result[i-1].ShipperState, result[i-1].PaidAmount]; 
+                        }
+                        var data = google.visualization.arrayToDataTable(datarows);
+                        var formatter = new google.visualization.NumberFormat({negativeColor: 'red', negativeParens: true, pattern: '$###,###'});
+                        formatter.format(data, 1);
+                        var options = {
+                            region: 'US',
+                            width: 50%,
+                            keepAspectRatio: true,
+                            resolution: 'provinces',
+                            //colorAxis: {colors: ['green', 'blue']},
+                            colorAxis: {colors: ['#e5f2ff', '#003366']}
+                        };
+        
+                        document.getElementById('loadingBusinessByLaneShipperChart').style.display='none';
+                       // var chart = new google.visualization.GeoChart(document.getElementById('businessbyLaneShipper_div'));
+                        var chart = new google.visualization.GeoChart(document.getElementById('Business_By_Lane_Shipper'));
+                        chart.draw(data, options);
+                    } 
+                }, {escape: true, timeout: 120000}
+            );  // end remote action        
+        }
+        
+    
+    </script>
+   
+    <div id="loadingBusinessByLaneShipperChart" class="loadingChartDataPanel" >
+    </div>
+    
+    <div id="businessbyLaneShipper_div" ></div>  
+</apex:component>

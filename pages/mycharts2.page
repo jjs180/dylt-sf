@@ -1,0 +1,398 @@
+<apex:page cache="false" sidebar="false" showHeader="true" controller="MyChartsController" readOnly="true">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"/>
+    <style type="text/css">
+        .chartGroup
+        {
+            display:block;
+            width:1400px;
+        }
+        div.chartflow
+        {
+            float:left;
+            margin:10px;
+            width:400px;
+        }
+        div.chartSectionTitle
+        {
+            width:100%;
+            height:30px;
+            font-size:14px;
+            font-weight:bold;
+            text-align:center;
+            line-height:30px;
+        }
+        div.dashboardBtn
+        {
+            width:100%;
+            text-align:center;
+        }
+        div.clr
+        {
+            clear:both;
+        }
+        a:hover{
+            cursor:default;
+        }
+        area:hover{
+            cursor:default;
+        }
+    </style>
+    <script>       
+        
+        function drilldownreport(reportId, reportFIlters)
+        {
+            var location = "https://na16.salesforce.com/" + reportId + "?drilldown=1";
+            if(reportFIlters.length > 0)
+            {
+                //[{column:"Probill__c.Delivery_Start__c", operator:"equals",value:"THIS_YEAR"},{column:"ACCOUNT_ID",operator:"equals",value:"001j000000M6FvXAAV"},{column:"USERS.NAME",operator:"equals",value:"Roman Clark"}]
+                var filters = "";
+                var firstReportFilter = "";
+                var firstFilter = reportFIlters[0];
+                var firstFilterColumnName = firstFilter.column;
+                if(firstFilterColumnName == "Probill__c.Delivery_Start__c")
+                {
+                    firstFilterColumnName = "00Nj00000093HpL";
+                }
+                var firstFilterValue = firstFilter.value;
+                if(firstFilterValue.search("001") != -1 && firstFilterValue.length == 18)
+                {
+                    firstFilterValue = firstFilterValue.substring(0, 15);
+                }
+                firstReportFilter = "&drillcol=" + firstFilterColumnName + "&drillval=" + firstFilterValue + "&drillop=equals";
+                filters += firstReportFilter;
+                for(var i = 1; i < reportFIlters.length; i++)
+                {
+                    var thisReportFilter = "";
+                    var thisFilter = reportFIlters[i];
+                    var filterColumnName = thisFilter.column;
+                    if(filterColumnName == 'Probill__c.Delivery_Start__c')
+                    {
+                        filterColumnName = "00Nj00000093HpL";
+                    }
+                    var thisFilterValue = thisFilter.value;
+                    if(thisFilterValue.search("001") != -1 && thisFilterValue.length == 18)
+                    {
+                        thisFilterValue = thisFilterValue.substring(0, 15);
+                    }
+                    thisReportFilter = "&drillcol" + (i + 1) + "=" + filterColumnName + "&drillval" + (i + 1) + "=" + thisFilterValue + "&drillop" + (i + 1) + "=equals";
+                    filters += thisReportFilter;
+                }
+                location += filters;
+            }
+            
+            //alert(location);
+            window.open(location, "_blank");
+        }
+    </script>
+    <apex:form id="form">
+        <apex:pageBlock title="Customer Dashboard" >
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <table width="400px" border="0">
+                            <tr>
+                                <td style="text-align:right;float:left;"><b>Time Period&nbsp;</b><apex:selectList value="{!DateFilterOption}" size="1">
+                                    <apex:selectOptions value="{!DateOptions}"></apex:selectOptions>
+                                </apex:selectList><br/><br/>
+                                <b style="float:left;">Account&nbsp;</b><apex:inputField value="{!filterContact.AccountId}"/><br/><br/>
+                                <b style="float:left;">Territory&nbsp;</b><apex:selectList value="{!TerritoryUser}" size="1">
+                                    <apex:selectOptions value="{!UserOptions}"></apex:selectOptions>
+                                 </apex:selectList><br/><br/>
+                                <b style="float:left; font-size:14px;">For Accessorial Reports:</b><br/><br/>
+                                <b style="float:left;">Manager&nbsp;</b><apex:selectList value="{!Manager}" size="1">
+                                    <apex:selectOptions value="{!ManagerOptions}"></apex:selectOptions>
+                                </apex:selectList><br/><br/>
+                                <b style="float:left;">Category&nbsp;</b><apex:selectList value="{!Category}" size="1">
+                                    <apex:selectOptions value="{!CategoryOptions}"></apex:selectOptions>
+                                </apex:selectList><br/>
+                                </td>
+                                <td style="text-align:center;vertical-align:middle;padding-left:20px;">
+                                    <apex:commandbutton value="Filter Reports" action="{!setNewReportFilters}"/>
+                                </td>                                
+                            </tr>
+                        </table>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+                        <apex:pageBlockSection columns="1">
+
+<!--> Row 1 Monthly Revenue, Shipments, Tonnage    -->         
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Revenue</div>
+                            <!-- 00Oj0000004QhTv -->
+                            <analytics:reportChart developerName="Monthly_Revenue_CY_vs_PY"   hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTv', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Shipments</div>
+                            <!--  00Oj0000004QhTw -->
+                            <analytics:reportChart developerNAme="Monthly_Shipments_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTw', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Tonnage</div>
+                            <!-- 00Oj0000004QhTx -->
+                            <analytics:reportChart developerNAme="Monthly_Tonnage_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTx', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                
+                
+               
+               
+               
+
+
+<!--> Row 2 Avg Revenue, Shipments, Tonnage           -->
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                       <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Revenue</div>
+                            <!-- 00Oj0000004QhTs -->
+                            <analytics:reportChart developerName="Avg_Daily_Revenue_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTs', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Shipments</div>
+                            <!-- 00Oj0000004QhTt  -->
+                            <analytics:reportChart developerName="Avg_Daily_Shipments_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTt', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Tonnage</div>
+                            <!-- 00Oj0000004QhTu -->
+                            <analytics:reportChart developerName="Avg_Daily_Tonnage_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTu', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                  
+<!--> Row 3 Biz by Lane-Shippers, Shipper Rev by State Table,  -->         
+                
+                
+               <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                      <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Shipper</div>
+                            <c:BusinessbyLaneShipper reportFilters="{!ReportFilter}"/>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Shipper Table</div>
+                            <c:BusinessbyLaneShipperTable reportFilters="{!ReportFilter}"/>
+                        </div>
+                                               
+                     <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+<!--> Row 4  Top 5 Shipper, Top 5 Shipper Lost ST, TOp 5 Shipper Lost LT -->         
+                
+                
+              
+                     
+                      
+<!--> Row 5 Biz by Lane-Consignee, Consignee Rev by State Table   -->
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                            <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Consignee</div>
+                            <c:BusinessbyLaneConsignee reportFilters="{!ReportFilter}"/>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Consignee Table</div>
+                            <c:BusinessbyLaneConsigneeTable reportFilters="{!ReportFilter}"/>
+                        </div>
+                        
+                  <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                
+
+<!--> Row 6  Top 5 Consignee, Top 5 Consignee Lost   -->
+
+                                      
+           
+<!--> Row 7 On Time Shipments, Length Linehaul, Days in Transit  --> 
+        
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Shipments by On Time Status</div>
+                            <analytics:reportChart reportId="00Oj0000004BTCF" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BTCF', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Days in Transit</div>
+                            <analytics:reportChart reportId="00Oj0000004Mspw" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Mspw', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Length of Line Haul</div>
+                            <analytics:reportChart reportId="00Oj0000004BdWS" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdWS', {!ReportFilter})"/></div>
+                        </div>
+                
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                     
+     
+     
+      <!--> Row 8 CR Days to File, Days to Resolve,   -->         
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio-Days to File</div>
+                            <analytics:reportChart reportId="00Oj0000004BdVU" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdVU', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio-Days to Resolve</div>
+                            <analytics:reportChart reportId="00Oj0000004BdVZ" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdVZ', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                
+          
+          
+          
+             
+             
+<!--> Row 9 CR by Shipment-Filed, by Shipment-Paid   by Revenue-Paid  -->       
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        
+                         <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Shipment-Filed</div>
+                            <analytics:reportChart reportId="00Oj0000004Msoy" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msoy', {!ReportFilter})"/></div>
+                        </div>
+                     <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Shipment-Paid</div>
+                            <analytics:reportChart reportId="00Oj0000004Msoo" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msoo', {!ReportFilter})"/></div>
+                        </div> 
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Revenue-Paid</div>
+                            <analytics:reportChart reportId="00Oj0000004Msp3" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msp3', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem> 
+                        
+<!--> Row 10  Corrections Weight, Corrections Class  -->   
+                        
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                       
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Corrections-Weight</div>
+                            <analytics:reportChart reportId="00Oj0000004Qhjv" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Qhjv ', {!ReportFilter})" /></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Corrections-Class</div>
+                            <analytics:reportChart reportId="00Oj0000004BffL" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BffL', {!ReportFilter})" /></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                
+                
+           
+                           
+<!--> Row 11 Guaranteed, Compliance, AR Money Owed by Aging,  --> 
+           <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Specialty Services-Guaranteed</div>
+                            <analytics:reportChart reportId="00Oj0000004BTAd" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BTAd', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Specialty Services-Compliance</div>
+                            <analytics:reportChart reportId="00Oj0000004BWcu" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BWcu', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">A/R Money Owed by Aging Category</div>
+                            <analytics:reportChart reportId="00Oj0000004BStN" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BStN', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>  
+        
+                            
+<!--> Row 12 Contribution Margin to Revenue-Stacked, CM Ratio-Line, CM Scatter  -->         
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                         <div class="chartflow">
+                            <div class="chartSectionTitle">Contribution Margin Ratio</div>
+                            <analytics:reportChart reportId="00Oj0000004MsvB" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004MsvB', {!ReportFilter})"/></div>
+        <!-->                </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Contribution Margin Scatter</div>
+                            <analytics:reportChart reportId="00Oj0000004MsvB" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdWr', {!ReportFilter})"/></div>
+              -->          </div> 
+
+
+                        <div class="chartflow">
+                           
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+
+<!--> Row 13 Bill Counts, Accessorial Revenues -->
+<!-->  <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Assessorials-By Bill Counts</div>
+                            <analytics:reportChart reportId="00Oj0000004D1Vn" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004D1Vn', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Assessorials-By Revenue</div>
+                            <analytics:reportChart reportId="00Oj0000004D1Vd" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004D1Vd', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>  
+-->
+            
+            </apex:pageBlockSection>
+        </apex:pageBlock> 
+    </apex:form>
+<script>
+    $( document ).ready(function() { //Brute force Removing attributes bound to link behavior
+        $('a.analyticsCordaChart').attr('data-aura-rendered-by','');
+        $('a.analyticsCordaChart').attr('href','#');
+        $('a.analyticsCordaChart').attr('class','');
+        $('div.spacer').attr('class','');
+    }); 
+</script>
+</apex:page>

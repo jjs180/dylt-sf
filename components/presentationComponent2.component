@@ -1,0 +1,314 @@
+<apex:component controller="presentationController2">
+    
+    <script>  
+        $('section').first();       
+        $('#next').click(function(e) {
+            e.preventDefault();                 
+            var $next = $('section.current').closest('section').nextAll('.section:first');                 
+            var top = $next.offset().top;                   
+            $('.current').removeClass('current');                 
+            $('body').animate({
+                scrollTop: top     
+            },1000, function () {
+                  $next.addClass('current');
+            });
+            
+        });
+        $('#prev').click(function(e) {
+            e.preventDefault();
+            if ($('.current').prev('section').length > 0){
+                var $prev = $('section.current').closest('section').prevAll('.section:first');             
+                var top = $prev.offset().top;                   
+                $('.current').removeClass('current');                 
+                $('body').animate({
+                  scrollTop: top     
+                },1000, function () {
+                       $prev.addClass('current');
+                });
+            }
+         });
+         
+         $(document).keydown(function (event) {
+                console.log(event.keyCode);
+                if (event.keyCode == 38) {
+                    event.preventDefault();
+                    if ($('.current').prev('section').length > 0){
+                        var $prev = $('section.current').closest('section').prevAll('.section:first');             
+                        var top = $prev.offset().top;                   
+                        $('.current').removeClass('current');                 
+                        $('body').animate({
+                          scrollTop: top     
+                        },1000, function () {
+                               $prev.addClass('current');
+                        });
+            }
+                } else if (event.keyCode == 40) {
+                    event.preventDefault();
+                    var $next = $('section.current').closest('section').nextAll('.section:first');                 
+                    var top = $next.offset().top;                   
+                    $('.current').removeClass('current');                 
+                    $('body').animate({
+                        scrollTop: top     
+                    },1000, function () {
+                          $next.addClass('current');
+                    });
+                }
+                else if (event.keyCode == 33) {
+                    event.preventDefault();
+                    if ($('.current').prev('section').length > 0){
+                        var $prev = $('section.current').closest('section').prevAll('.section:first');             
+                        var top = $prev.offset().top;                   
+                        $('.current').removeClass('current');                 
+                        $('body').animate({
+                          scrollTop: top     
+                        },1000, function () {
+                               $prev.addClass('current');
+                        });
+            }
+                } else if (event.keyCode == 34) {
+                    event.preventDefault();
+                    var $next = $('section.current').closest('section').nextAll('.section:first');                 
+                    var top = $next.offset().top;                   
+                    $('.current').removeClass('current');                 
+                    $('body').animate({
+                        scrollTop: top     
+                    },1000, function () {
+                          $next.addClass('current');
+                    });
+                }
+            });            
+     </script>
+         
+    
+    <script>
+        function ShowReportsToPresentationVM(){  
+
+            var self = this;
+           
+            self.slideContainer = ko.observable();
+            /******************* Slides *************************/
+            self.monthlyRevenue = ko.observable(false);         
+            self.monthlyShipments = ko.observable(false);
+            self.monthlyTonnage = ko.observable(false);
+            self.monthlyRevenueIndex = ko.observable();         
+            self.monthlyShipmentsIndex = ko.observable();
+            self.monthlyTonnageIndex = ko.observable();
+            self.businessByLaneShipper = ko.observable(false);
+            self.businessByLaneShipperTable = ko.observable(false);
+            self.businessByLaneShipperIndex = ko.observable();  
+            self.businessByLaneShipperTableIndex = ko.observable();
+            self.top5Consignees = ko.observable(false);
+            self.top5ConsigneesLostST = ko.observable(false);
+            self.top5ConsigneesLostLT = ko.observable(false);
+            self.top5ConsigneesIndex = ko.observable();
+            self.top5ConsigneesLostSTIndex = ko.observable();
+            self.top5ConsigneesLostLTIndex = ko.observable();
+            self.top5Shippers = ko.observable(false);
+            self.top5ShippersLostST = ko.observable(false);
+            self.top5ShippersLostLT = ko.observable(false);
+            self.top5ShippersIndex = ko.observable();
+            self.top5ShippersLostSTIndex = ko.observable();
+            self.top5ShippersLostLTIndex = ko.observable();
+            self.businessByLaneConsignee = ko.observable(false);
+            self.businessByLaneConsigneeIndex = ko.observable();
+            self.businessByLaneConsigneeTable = ko.observable(false);
+            self.businessByLaneConsigneeTableIndex = ko.observable();
+            self.claimsRatioDaysToFile = ko.observable(false);
+            self.claimsRatioDaysToResolve = ko.observable(false);
+            self.claimsRatioDaysToFileIndex = ko.observable();
+            self.claimsRatioDaysToResolveIndex = ko.observable();
+            self.claimsRatioByShipmentFiled = ko.observable(false);
+            self.claimsRatioByShipmentFiledIndex = ko.observable();
+            self.claimsRatioByShipmentPaid = ko.observable(false);
+            self.claimsRatioByShipmentPaidIndex = ko.observable();
+            self.claimsRatioByRevenuePaid = ko.observable(false);
+            self.claimsRatioByRevenuePaidIndex = ko.observable(); 
+            //self.correctionsClass = ko.observable(false);
+            //self.correctionsWeight = ko.observable(false);
+            //self.correctionsClassIndex = ko.observable();
+            //self.correctionsWeightIndex = ko.observable();
+            //self.accBillCounts = ko.observable();
+            //self.accBillCountsIndex = ko.observable();
+            //self.accRev = ko.observable();
+            //self.accRevIndex = ko.observable();
+            //self.specialtyServicesCompliance = ko.observable(false);
+            //self.specialtyServicesGuaranteed = ko.observable(false);
+            //self.specialtyServicesComplianceIndex = ko.observable();
+            //self.specialtyServicesGuaranteedIndex = ko.observable();
+            //self.ARMoneyOwedByAgingCategory = ko.observable(false);   
+            //self.ARMoneyOwedByAgingCategoryIndex = ko.observable();
+            //self.contributionMarginScatter = ko.observable(false);
+            //self.contributionRatio = ko.observable(false);
+            //self.contributionMarginScatterIndex = ko.observable();
+            //self.contributionRatioIndex = ko.observable();
+            self.averageDaysInTransit = ko.observable(false);
+            self.averageLengthOfLineHaul = ko.observable(false); 
+            self.averageDaysInTransitIndex = ko.observable();
+            self.averageLengthOfLineHaulIndex = ko.observable();   
+            self.shipmentsByOnTimeStatus = ko.observable(false); 
+            self.shipmentsByOnTimeStatusIndex = ko.observable();
+            self.AvgDailyShipments = ko.observable(false);
+            self.AvgDailyShipmentsIndex = ko.observable(false);
+            self.AvgDailyRevenue = ko.observable(false); 
+            self.AvgDailyRevenueIndex = ko.observable();
+            self.AvgDailyTonnage = ko.observable(false); 
+            self.AvgDailyTonnageIndex = ko.observable();
+            //self.top5Shippers = ko.observable(false);
+              
+            var toSplitReports = "{!SelectedReports}".replace("[","").replace("]", "");
+            var splitReports = toSplitReports.split(';');            
+           
+            //console.log('tosplitreports====' + toSplitReports);
+            
+            self.reportsToView = ko.observableArray();
+            var retrievedReports;
+            self.retrievedReports = ko.observableArray(splitReports);
+            self.reportsToShow = ko.observableArray();            
+            console.log('self.retrieved reports=======' + self.retrievedReports());
+            //console.log('retrievedReport 0=====' + self.retrievedReports()[0]);
+            
+            self.slideIndex = ko.observable();                     
+            
+            for (i=0; i < self.retrievedReports().length; i++){
+                //debugger;
+                //console.log('i===' + i);
+                //console.log(self.retrievedReports()[i]);
+                self.slideIndex(i);
+                //console.log('slideIndex ===' + self.slideIndex());
+                
+               if (self.retrievedReports()[i] == 'Average Daily Revenue'){
+                   self.AvgDailyRevenue(true);
+                   self.AvgDailyRevenueIndex(self.slideIndex());
+               }
+               else if (self.retrievedReports()[i] == 'Average Daily Shipments'){
+                    self.AvgDailyShipments(true);
+                    self.AvgDailyShipmentsIndex(self.slideIndex());
+                }
+               else if (self.retrievedReports()[i] == 'Average Daily Tonnage'){
+                   self.AvgDailyTonnage(true);
+                   self.AvgDailyTonnageIndex(self.slideIndex());
+               }                
+                else if (self.retrievedReports()[i] == 'Average Days in Transit'){
+                    self.averageDaysInTransit(true);
+                    self.averageDaysInTransitIndex(self.slideIndex());
+                }
+                else if (self.retrievedReports()[i] == 'Average Length of Line Haul'){
+                    self.averageLengthOfLineHaul(true);
+                    self.averageLengthOfLineHaulIndex(self.slideIndex());
+                } 
+                else if (self.retrievedReports()[i] == 'Business by Lane-Consignee'){
+                    self.businessByLaneConsignee(true);
+                    self.businessByLaneConsigneeIndex(self.slideIndex());
+                }
+                else if (self.retrievedReports()[i] == 'Business by Lane-Consignee Table'){
+                    self.businessByLaneConsigneeTable(true);
+                    self.businessByLaneConsigneeTableIndex(self.slideIndex());
+                }               
+                else if (self.retrievedReports()[i] == 'Business by Lane-Shipper'){
+                    self.businessByLaneShipper(true);
+                    self.businessByLaneShipperIndex(self.slideIndex());
+                } 
+                else if (self.retrievedReports()[i] == 'Business by Lane-Shipper Table'){
+                    self.businessByLaneShipperTable(true);
+                    self.businessByLaneShipperTableIndex(self.slideIndex());
+                }
+                else if (self.retrievedReports()[i] == 'Claims Ratio-by Revenue-Paid'){
+                    self.claimsRatioByRevenuePaid(true);
+                    self.claimsRatioByRevenuePaidIndex(self.slideIndex());
+                }
+                else if (self.retrievedReports()[i] == 'Claims Ratio-by Shipment-Filed'){
+                    self.claimsRatioByShipmentFiled(true);
+                    self.claimsRatioByShipmentFiledIndex(self.slideIndex()); 
+                }
+                else if (self.retrievedReports()[i] == 'Claims Ratio-by Shipment-Paid'){
+                    self.claimsRatioByShipmentPaid(true);
+                    self.claimsRatioByShipmentPaidIndex(self.slideIndex()); 
+                }
+                else if (self.retrievedReports()[i] == 'Claims Ratio-Days to File'){
+                    self.claimsRatioDaysToFile(true);
+                    self.claimsRatioDaysToFileIndex(self.slideIndex()); 
+                }
+                else if (self.retrievedReports()[i] == 'Claims Ratio-Days to Resolve'){
+                    self.claimsRatioDaysToResolve(true);
+                    self.claimsRatioDaysToResolveIndex(self.slideIndex()); 
+                }
+                /*else if (self.retrievedReports()[i] == 'Contribution Margin Ratio'){
+                    self.contributionRatio(true);
+                    self.contributionRatioIndex(self.slideIndex());
+                }*/
+                /*
+                else if (self.retrievedReports()[i] == 'Contribution Margin-Scatter'){
+                    self.contributionMarginScatter(true);
+                    self.contributionMarginScatterIndex(self.slideIndex());  
+                } */
+                
+                /*else if (self.retrievedReports()[i] == 'Corrections-Class'){
+                    self.correctionsClass(true);
+                    self.correctionsClassIndex(self.slideIndex());
+                }*/
+                /*else if (self.retrievedReports()[i] == 'Corrections-Weight'){
+                    self.correctionsWeight(true);
+                    self.correctionsWeightIndex(self.slideIndex());
+                }*/
+                else if (self.retrievedReports()[i] == 'Monthly Revenue'){                  
+                    self.monthlyRevenue(true);
+                    self.monthlyRevenueIndex(self.slideIndex());
+                }
+               else if (self.retrievedReports()[i] == 'Monthly Shipments'){                                              
+                   self.monthlyShipments(true);
+                   self.monthlyShipmentsIndex(self.slideIndex());
+               }
+               else if (self.retrievedReports()[i] == 'Monthly Tonnage'){
+                   self.monthlyTonnage(true);
+                   self.monthlyTonnageIndex(self.slideIndex());
+               }
+               else if (self.retrievedReports()[i] == 'Shipments By On Time Status'){
+                   self.shipmentsByOnTimeStatus(true);
+                   self.shipmentsByOnTimeStatusIndex(self.slideIndex());
+               }                 
+               /* else if (self.retrievedReports()[i] == 'Specialty Services-Compliance'){
+                   self.specialtyServicesCompliance(true);
+                   self.specialtyServicesComplianceIndex(self.slideIndex());
+               } */                   
+               /*else if (self.retrievedReports()[i] == 'Specialty Services-Guaranteed'){
+                   self.specialtyServicesGuaranteed(true);
+                   self.specialtyServicesGuaranteedIndex(self.slideIndex());
+               } */
+               else if (self.retrievedReports()[i] == 'Top 5 Consignees'){
+                    self.top5Consignees(true);
+                    self.top5ConsigneesIndex(self.slideIndex());
+               }
+               else if(self.retrievedReports()[i] == 'Top 5 Consignees Lost ST'){
+                    self.top5ConsigneesLostST(true);
+                    self.top5ConsigneesLostSTIndex(self.slideIndex());
+               }
+               else if(self.retrievedReports()[i] == 'Top 5 Consignees Lost LT'){
+                    self.top5ConsigneesLostLT(true);
+                    self.top5ConsigneesLostLTIndex(self.slideIndex());
+               }
+               else if (self.retrievedReports()[i] == 'Top 5 Shippers'){
+                    self.top5Shippers(true);
+                    self.top5ShippersIndex(self.slideIndex());
+               } 
+               else if (self.retrievedReports()[i] == 'Top 5 Shippers Lost LT'){
+                    self.top5ShippersLostLT(true);
+                    self.top5ShippersLostLTIndex(self.slideIndex());
+               }  
+               else if (self.retrievedReports()[i] == 'Top 5 Shippers Lost ST'){
+                    self.top5ShippersLostST(true);
+                    self.top5ShippersLostSTIndex(self.slideIndex());
+               }    
+                else{
+                    
+               }  
+        
+            } 
+                                  
+        }
+        var ShowReportsToPresentation = new ShowReportsToPresentationVM();
+        
+        ko.applyBindings(ShowReportsToPresentation);
+        //buttons();
+    </script>
+            
+</apex:component>

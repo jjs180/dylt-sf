@@ -1,0 +1,3 @@
+<apex:page >
+    <c:Top5Shippers ></c:Top5Shippers>
+</apex:page>

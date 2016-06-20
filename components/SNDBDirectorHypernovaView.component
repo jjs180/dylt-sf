@@ -1,0 +1,248 @@
+<apex:component >
+<div id="DirectorHypernovaView" class="row" style="display:none;padding:2em 0em 2em 0em;" >
+   <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#dirhnRevenue" role="tab" data-toggle="tab">Revenue</a>
+        </li>
+        <li role="presentation">
+            <a href="#dirhnPipeline" role="tab" data-toggle="tab">Pipeline</a>
+        </li>
+        <li role="presentation">
+            <a href="#dirhnShipper" role="tab" data-toggle="tab">Shipper</a>
+        </li>
+        <li role="presentation">
+            <a href="#dirhnQuality" role="tab" data-toggle="tab">Quality</a>
+        </li>
+        <li role="presentation">
+            <a href="#dirhnSpecialtyServices" role="tab" data-toggle="tab">Specialty Services</a>
+        </li>
+        <li role="presentation">
+            <a href="#dirhnGaugeTheWeb" role="tab" data-toggle="tab">Gauge The Web</a>
+        </li>
+        
+    </ul>
+    
+    <div class="tab-content">
+
+        <div role="tabpanel" class="tab-pane fade in active" id="dirhnRevenue">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Revenue_and_Quota_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Revenue Tab -->
+        
+         <div role="tabpanel" class="tab-pane" id="dirhnPipeline">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Pipeline_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Pipeline Tab -->
+        
+        <div role="tabpanel" class="tab-pane" id="dirhnShipper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Shipper_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Shipper Tab -->
+        
+        <div role="tabpanel" class="tab-pane" id="dirhnQuality">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Quality_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Quality Tab -->
+        
+        <div role="tabpanel" class="tab-pane" id="dirhnSpecialtyServices">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Specialty_Services_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Specialty Services Tab -->
+        
+        <div role="tabpanel" class="tab-pane" id="dirhnGaugeTheWeb">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="xpanel xpanel-info">
+                            <div class="xpanel-heading"></div>
+                            <div class="xpanel-content">
+                                <div id="DRHN_Gauge_The_Web_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Gauge The Web Tab -->
+    </div> <!-- end all tabs - tab-content -->
+</div>
+
+<script type="text/javascript">
+var directorHypernovaReports = new Array(
+           {
+                name : 'Revenue_and_Quota_Hypernova', 
+                renderTo: 'DRHN_Revenue_and_Quota_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Revenue_Quota_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           },
+           {
+                name : 'Pipeline_Hypernova', 
+                renderTo: 'DRHN_Pipeline_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Pipeline_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Score', type: 'number', isVisible: true, order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           },
+            {
+                name : 'Shipper_Hypernova', 
+                renderTo: 'DRHN_Shipper_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Shipper_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Shipper_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           },
+           {
+                name : 'Quality_Hypernova', 
+                renderTo: 'DRHN_Quality_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Quality_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           },
+           {
+                name : 'Specialty_Services_Hypernova', 
+                renderTo: 'DRHN_Specialty_Services_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Specialty_Services_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           },
+            {
+                name : 'Gauge_The_Web_Hypernova', 
+                renderTo: 'DRHN_Gauge_The_Web_Hypernova',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Gauge_The_Web_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: true,
+                numberOfGroupColumns: 3,
+                showTableHeading: true,
+                columns: [
+                           {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+           }
+           
+           
+           );
+           
+    
+</script>
+        
+</apex:component>

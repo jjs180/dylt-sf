@@ -1,0 +1,509 @@
+<apex:component >
+<div id="AccountExecutiveSupernovaView" class="row" style="padding:2em 0em 2em 0em;" >
+   <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#aesvGrid" role="tab" data-toggle="tab">Grid</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvArOver60" role="tab" data-toggle="tab">AR Over 60</a>
+        </li>
+         <li role="presentation">
+            <a href="#aesvCompliance" role="tab" data-toggle="tab">Compliance</a>
+        </li>
+         <li role="presentation">
+            <a href="#aesvLongTermGrowth" role="tab" data-toggle="tab">Long Term Growth</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvCloseRatioIO" role="tab" data-toggle="tab">Close Ratio</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvGuaranteed" role="tab" data-toggle="tab">Guaranteed Shipments</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvShortTermGrowth" role="tab" data-toggle="tab">Short Term Growth</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvRateQuoteIP" role="tab" data-toggle="tab">Rate Quote</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvContributionMargin" role="tab" data-toggle="tab">Contribution Margin</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvWebPickups" role="tab" data-toggle="tab">Web Pickups</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvProfiles" role="tab" data-toggle="tab">Profiles</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvQuota" role="tab" data-toggle="tab">Quota</a>
+        </li>
+        <li role="presentation">
+            <a href="#aesvShipperCount" role="tab" data-toggle="tab">Shipper Count</a>
+        </li>
+        
+    </ul>
+    <div class="tab-content">
+        
+        <div role="tabpanel" class="tab-pane fade in active" id="aesvGrid">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-12">
+                    	<div id="AESV_Team_SuperNova_VP_Matrix" class="loadingChart"></div>
+                	</div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Grid-->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvArOver60">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+                    <div class="col-sm-8">
+                    	<div id="AESV_Ar_Over_60" class="loadingChart"></div>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end AR Over 60 -->
+        
+         <div role="tabpanel" class="tab-pane" id="aesvCompliance">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Compliance" class="loadingChart"></div>
+					</div>
+                	<div class="col-sm-2"></div>
+
+                </div>
+            </div>
+        </div> 
+        <!-- end Compliance -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvLongTermGrowth">
+            <div class="container-fluid">
+                <div class="row" >
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Long_Term_Growth" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+					
+                </div>
+            </div>
+        </div> 
+        <!-- end Long Term Growth -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvCloseRatioIO">
+            <div class="container-fluid">
+                <div class="row" >
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Close_Ratio_IO" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Close Ratio -->
+        
+    
+        <div role="tabpanel" class="tab-pane" id="aesvGuaranteed">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Guaranteed" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Guaranteed Shipments -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvShortTermGrowth">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Short_Term" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Short Term Growth -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvRateQuoteIP">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Rate_Quote_IP" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Rate Quote -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvContributionMargin">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Contribution_Margin" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Contribution Margin -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvWebPickups">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Pick_Ups" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Web Pickups -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvProfiles">
+            <div class="container-fluid">
+                <div class="row">
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Profiles" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Profiles -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvQuota">
+            <div class="container-fluid">
+                <div class="row" >
+                	<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Quota" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Quota -->
+        
+        <div role="tabpanel" class="tab-pane" id="aesvShipperCount">
+            <div class="container-fluid">
+                <div class="row" >
+	                <div class="col-sm-2"></div>
+					<div class="col-sm-8">
+                    	<div id="AESV_Shipper_Count" class="loadingChart"></div>
+                	</div>
+                	<div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div> 
+        <!-- end Shipper Count -->
+        
+    
+    </div>
+    <!-- end All Tabs ( tab-content) -->
+    
+</div>
+   
+    
+    
+    
+<script type="text/javascript">
+    
+
+var accountExecutiveSupernovaReports = new Array(
+            {
+                name : 'Team_SuperNova_VP_Matrix', 
+                renderTo: 'AESV_Team_SuperNova_VP_Matrix',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 7,
+                sortColumnName: '',
+                visualizationType: 'table',
+                displayUserPhoto: false,
+                //loadingChartClass: 'loadingChart500',
+                showTableHeading: true,
+                columns: [ 
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Quota Score', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Pipeline Score', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Shippers_CM_and_Collections_Score__c', label: 'Shippers CM & Collections Score', type: 'number', isVisible: true, order: 4},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Quality Score', type: 'number', isVisible: true, order: 5},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Specialty Services Score', type: 'number',  isVisible: true, order: 6},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Gauge The Web Score', type: 'number', isVisible: true, order: 7},
+                            {name: 'Supernova__c.Total_Score__c', label: 'Total Score', type: 'number', isVisible: true, order: 8},
+                            {name: 'RowCount', label: 'Count', isVisible: false, order: 9}
+                        ]
+            },
+           {
+                name : 'Ar_Over_60', 
+                renderTo: 'AESV_Ar_Over_60',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.AR_Over_60_Perc__c', label: 'percent', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Collect_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                            {name: 'FORMULA2', label: 'Collection Score', type: 'number', isVisible: false, order: 5}
+                        ]
+           },
+           {
+                name : 'Compliance', 
+                renderTo: 'AESV_Compliance',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CY_Compliance__c', label: 'Compliance', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Compliance_Score__c', label: 'Score ', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                            {name: 'FORMULA1', label: 'Compliance Score', type: 'number', isVisible: false, order: 4}
+                        ]
+           },
+           {
+                name : 'Long_Term', 
+                renderTo: 'AESV_Long_Term_Growth',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Long_Term_Growth__c', label: 'Growth', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Long_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},                            
+                            {name: 'FORMULA2', label: 'Long Term Score', type: 'number', isVisible: false, order: 5}
+
+                        ]
+           },
+           {
+                name : 'Close_Ratio_IO', 
+                renderTo: 'AESV_Close_Ratio_IO',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CR_Close_Ratio__c', label: 'Close Ratio', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                            {name: 'Supernova__c.CR_Ratio_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text',  order: 4}
+
+                        ]
+           },
+           {
+                name : 'Guaranteed', 
+                renderTo: 'AESV_Guaranteed',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CY_Guaranteed__c', label: 'Shipments', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Guaranteed_Score__c', label: 'Score', type: 'number', isVisible: false, order: 3},
+                            {name: 'FORMULA1', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+                        ]
+           },
+           {
+                name : 'Short_Term', 
+                renderTo: 'AESV_Short_Term',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Short_Term_Growth__c', label: 'Growth', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Short_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                            {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: false, order: 5}
+
+                        ]
+           },
+           {
+                name : 'Rate_Quote_IP', 
+                renderTo: 'AESV_Rate_Quote_IP',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Web_Quotes_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Web_Quotes_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                        ]
+           },
+           { 
+                name : 'CM_New_Supernova', 
+                renderTo: 'AESV_Contribution_Margin',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: '',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.TCG_Contribution_Perc__c', label: 'Ratio', type: 'percent', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'Supernova__c.TCG_Contribution_Score__c', label: 'Score', type: 'number', isVisible: false, order: 3},
+                            {name: 'Supernova__c.Contribution_Margin_Score__c', label: 'Margin Score', type: 'number', isVisible: false, order: 4},
+                            {name: 'Supernova__c.CR_Revenue_Score__c', label: 'Revenue Score', type: 'number', isVisible: false, order: 5},
+                            {name: 'FORMULA1', label: '', type: 'number', isVisible: false, order: 6}
+                        ]
+           },
+           {
+                name : 'Pick_Ups', 
+                renderTo: 'AESV_Pick_Ups',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Web_Pickups_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                            {name: 'Supernova__c.Web_Pickups_Score__c', label: 'Score', type: 'number', isVisible: false, styleClass: 'bold-text', order: 3},
+                            {name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 4},
+                            {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 5}
+                        ]
+           },
+           {
+                name : 'Profiles', 
+                renderTo: 'AESV_Profiles',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CR_New_Profiles__c', label: 'Profles', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Profiles_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                            {name: 'FORMULA1', label: 'Profile Score', type: 'number', isVisible: false, order: 4}
+                        ]
+           },
+           {
+                name : 'Quota', 
+                renderTo: 'AESV_Quota',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CY_Quota_Attain__c', label: 'New Profles', type: 'number', isVisible: false, order: 2},
+                            {name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                            {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                        ]
+           },
+           {
+                name : 'Shipper_Count', 
+                renderTo: 'AESV_Shipper_Count',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 2,
+                sortColumnName: 'FORMULA1',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                groupColumns: false,
+                numberOfGroupColumns: 0,
+                showTableHeading: true,
+                columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.PM_Shippers__c', label: 'PM Shippers', type: 'number', isVisible: false, order: 2},
+                            {name: 'Supernova__c.CHG_Shippers__c', label: 'Change in Shippers', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Shipper_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                            {name: 'FORMULA1', label: 'Precent', type: 'number', isVisible: false, order: 5}
+                        ]
+           });
+          
+</script>    
+        
+</apex:component>

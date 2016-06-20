@@ -1,0 +1,512 @@
+<apex:component >
+    
+    <div id="VicePresidentSupernovaView" class="row" style="display:none;padding:2em 0em 2em 0em;" >
+           <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#vpsvGrid" role="tab" data-toggle="tab">Grid</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvQuota" role="tab" data-toggle="tab">Quota</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvLongTermGrowth" role="tab" data-toggle="tab">Long Term Growth</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvShortTermGrowth" role="tab" data-toggle="tab">Short Term Growth</a>
+                </li>
+                 <li role="presentation">
+                    <a href="#vpsvNewRevenue" role="tab" data-toggle="tab">New Revenue</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvCloseRatioIO" role="tab" data-toggle="tab">Close Ratio</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvProfiles" role="tab" data-toggle="tab">New Profiles</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvContributionMargin" role="tab" data-toggle="tab">Contribution Margin</a>
+                </li>              
+                <li role="presentation">
+                    <a href="#vpsvArOver60" role="tab" data-toggle="tab">AR Over 60</a>
+                </li>       
+                <li role="presentation">
+                    <a href="#vpsvShipperCount" role="tab" data-toggle="tab">Shipper Count</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvGuaranteed" role="tab" data-toggle="tab">Guaranteed Shipments</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvCompliance" role="tab" data-toggle="tab">Compliance</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvWebPickups" role="tab" data-toggle="tab">Web Pickups</a>
+                </li>
+                <li role="presentation">
+                    <a href="#vpsvRateQuoteIP" role="tab" data-toggle="tab">Rate Quote</a>
+                </li>
+              </ul>
+            <div class="tab-content">
+                 <div role="tabpanel" class="tab-pane fade in active" id="vpsvGrid">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_VP_Grid" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end VP_Grid -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvArOver60">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Ar_Over_60" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end AR Over 60 -->
+                
+                 <div role="tabpanel" class="tab-pane" id="vpsvCompliance">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Compliance" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Compliance -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvLongTermGrowth">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Long_Term_Growth" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Long Term Growth -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvCloseRatioIO">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Close_Ratio_IO" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Close Ratio -->
+                
+            
+                <div role="tabpanel" class="tab-pane" id="vpsvGuaranteed">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Guaranteed" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Guaranteed Shipments -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvShortTermGrowth">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Short_Term" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Short Term Growth -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvNewRevenue">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_New_Revenue" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end New Revenue -->
+                
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvRateQuoteIP">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Rate_Quote_IP" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Rate Quote -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvContributionMargin">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Contribution_Margin" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Contribution Margin -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvWebPickups">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Pick_Ups" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Web Pickups -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvProfiles">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Profiles" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end New Profiles -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvQuota">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Quota" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Quota -->
+                
+                <div role="tabpanel" class="tab-pane" id="vpsvShipperCount">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="VPS_Shipper_Count" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Shipper Count -->
+                
+            
+            </div>
+            <!-- end All Tabs ( tab-content) -->
+            
+        </div>
+        
+<script type="text/javascript">
+    
+   
+var vicePresidentSupernovaReports = new Array(
+        {
+                name : 'VP_Grid', 
+                renderTo: 'VPS_VP_Grid',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 7,
+                sortColumnName: '',
+                visualizationType: 'table',
+                displayUserPhoto: false,
+                showTableHeading: true,
+                columns: [ 
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Revenue & Quota Score', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Pipeline Score', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Shippers_CM_and_Collections_Score__c', label: 'Shipper Score', type: 'number', isVisible: true, order: 4},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Quality Score', type: 'number', isVisible: true, order: 5},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Specialty Services Score', type: 'number',  isVisible: true, order: 6},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Gauge The Web Score', type: 'number', isVisible: true, order: 7},
+                            {name: 'Supernova__c.Total_Score__c', label: 'Total Score', type: 'number', isVisible: true, order: 8},
+                            {name: 'RowCount', label: 'Count', isVisible: false, order: 9}
+                        ]
+    },
+   {
+       
+       
+        name : 'Ar_Over_60', 
+        renderTo: 'VPS_Ar_Over_60',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 4,
+        sortColumnName: 'Supernova__c.Collect_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, isBold:false, order: 2},
+                    {name: 'FORMULA1', label: 'AR % over 60', type: 'percent', isVisible: true, isBold:false, order: 2},
+                    {name: 'Supernova__c.Collect_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                    {name: 'Supernova__c.AR_Over_60_Perc__c', label: ' Ratio', type: 'number', isVisible: false, order: 4},
+                    {name: 'FORMULA2', label: 'Collection Score', type: 'number', isVisible: false, order: 5}
+                    
+                ]
+   },
+   {
+        name : 'Compliance', 
+        renderTo: 'VPS_Compliance',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.CY_Compliance__c', label: 'Compliance', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.CY_Compliance__c', label: 'Compliance Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Compliance_Score__c', label: 'Score ', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                    {name: 'FORMULA1', label: 'Compliance Score', type: 'number', isVisible: false, order: 4}
+                ]
+   },
+   {
+        name : 'Long_Term', 
+        renderTo: 'VPS_Long_Term_Growth',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.Long_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.Long_Term_Growth__c', label: 'Growth', type: 'number', isVisible: false, order: 2},
+                    //{name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Long_Term_Growth__c', label: 'LT Growth', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'LT Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Long_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                    {name: 'FORMULA2', label: 'Long Term Score', type: 'number', isVisible: false, order: 5}
+
+                ]
+   },
+   {
+        name : 'Close_Ratio_IO', 
+        renderTo: 'VPS_Close_Ratio_IO',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.CR_Ratio_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.CR_Close_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.CR_Close_Ratio__c', label: 'Close Ratio', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'Close Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.CR_Ratio_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+                ]
+   },
+   {
+        name : 'Guaranteed', 
+        renderTo: 'VPS_Guaranteed',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.CY_Guaranteed__c', label: 'Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.CY_Guaranteed__c', label: 'Guaranteed Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Guaranteed_Score__c', label: 'Score', type: 'number', isVisible: false,  order: 3},
+                    {name: 'FORMULA1', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text',order: 4}
+                ]
+   },
+   {
+        name : 'Short_Term', 
+        renderTo: 'VPS_Short_Term',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.Short_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.Short_Term_Growth__c', label: 'Growth', type: 'number', isVisible: false, order: 2},
+                    //{name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Short_Term_Growth__c', label: 'ST Growth', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'ST Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Short_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text',order: 4},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: false, order: 5}
+
+                ]
+   },
+   {
+        name : 'New_Revenue', 
+        renderTo: 'VPS_New_Revenue',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'Supernova__c.CR_Revenue_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+         columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.CR_New_Revenue_PD__c', label: 'New Revenue', type: 'currency', isVisible: true, order: 2},
+                            {name: 'FORMULA1', label: 'New Revenue', type: 'number', isVisible: false, order: 3},
+                            {name: 'Supernova__c.CR_Revenue_Score__c', label: 'New Revenue Score', type: 'number', isVisible: true, styleClass: 'bold-text',order: 4},
+                            {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: false, order: 5}
+                ]
+   },
+   {
+        name : 'Rate_Quote_IP', 
+        renderTo: 'VPS_Rate_Quote_IP',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'Supernova__c.Web_Quotes_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.Web_Quotes_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA1', label: 'Web Quote %', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Web_Quotes_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+
+                ]
+   },
+   {  // TODO: Left off here
+        name : 'CM_New_Supernova', 
+        renderTo: 'VPS_Contribution_Margin',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'Supernova__c.TCG_Contribution_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.TCG_Contribution_Perc__c', label: 'Ratio', type: 'percent', isVisible: false, order: 2},
+                            {name: 'FORMULA2', label: 'Ratio', type: 'percent', isVisible: true, order: 3},                          
+                            {name: 'Supernova__c.TCG_Contribution_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                            {name: 'Supernova__c.CR_Revenue_Score__c', label: 'Revenue Score', type: 'number', isVisible: false, order: 5}
+                        ]
+   },
+   {
+        name : 'Pick_Ups', 
+        renderTo: 'VPS_Pick_Ups',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.Web_Pickups_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                    {name: 'Supernova__c.Web_Pickups_Score__c', label: 'Score', type: 'number', isVisible: false, order: 3},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 4},
+                    {name: 'FORMULA1', label: 'Web Pickup %', type: 'percent', isVisible: true, order: 4},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 5}
+                ]
+   },
+   {
+        name : 'Profiles', 
+        renderTo: 'VPS_Profiles',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CR_New_Profiles__c', label: 'Profles', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Profiles_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                    {name: 'FORMULA1', label: 'Profile Score', type: 'number', isVisible: false, order: 4}
+                ]
+   },
+   {
+        name : 'Quota', 
+        renderTo: 'VPS_Quota',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'FORMULA2',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CY_Quota_Attain__c', label: 'New Profles', type: 'number', isVisible: false, order: 2},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA1', label: 'Quota %', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                ]
+   },
+   {
+        name : 'Shipper_Count', 
+        renderTo: 'VPS_Shipper_Count',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.Shipper_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.PM_Shippers__c', label: 'PM Shippers', type: 'number', isVisible: false, order: 2},
+                    //
+                    //{name: 'Supernova__c.CHG_Shippers__c', label: 'Change In Shippers', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.CHG_Shippers__c', label: 'Shipper Count', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Shipper_Score__c', label: ' Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                    {name: 'FORMULA1', label: 'Precent', type: 'number', isVisible: false, order: 5}
+                ]
+   });
+           
+</script>    
+   
+    
+</apex:component>

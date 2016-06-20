@@ -1,0 +1,40 @@
+<apex:component controller="MontlyRevenueController">
+    <apex:attribute name="acctId" type="String" description="this is the owner of the opp" assignTo="{!AccountId}" access="public"/>
+    <apex:attribute name="year" type="String" description="this is the year of the opp" assignTo="{!currentYear}" access="public"/>
+    <apex:attribute name="quarter" type="String" description="this is the quarter of the opp" assignTo="{!CurrentQuarter}" access="public"/>
+    <apex:includeScript value="https://www.google.com/jsapi"/>
+    <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            google.setOnLoadCallback(drawChart);
+            function drawChart() {          
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.MontlyRevenueController.getQuarterRevenues}',
+            "{!AccountId}","{!currentYear}","{!CurrentQuarter}", 
+            function(result, event){
+                if (event.status) {
+                  var data = google.visualization.arrayToDataTable([
+                    ['Appointed Delivery Start', 'Sum Of Paid Amount'],
+                    [result[0].MonthName + " {!currentYear}",  result[0].MonthlyPaidAmount],
+                    [result[1].MonthName + " {!currentYear}",  result[1].MonthlyPaidAmount],
+                    [result[2].MonthName + " {!currentYear}",  result[2].MonthlyPaidAmount]
+                  ]);  
+                  var options = {
+                    title: 'Monthly Revenue',
+                    width: 360,
+                    height: 360,
+                    hAxis: {title: 'Month', titleTextStyle: {color: 'red'}}
+                  };
+        
+                  var chart = new google.visualization.ColumnChart(document.getElementById('MontlyRevenue_chart'));
+                  var formatter = new google.visualization.NumberFormat({prefix: '$', negativeColor: 'red', negativeParens: true});
+                  formatter.format(data, 1); // Apply formatter to second column
+                  chart.draw(data, options);
+                } 
+            }, 
+            {escape: true}
+        );          
+        }
+
+    </script>
+    <div id="MontlyRevenue_chart"></div>  
+</apex:component>

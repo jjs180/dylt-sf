@@ -1,0 +1,880 @@
+<apex:page cache="false" sidebar="false" showHeader="true" controller="CustomerDashboardCtrl" readOnly="true" >
+
+    <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, '/jquery/jquery-2.1.4.min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'underscore-min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'handlebars-v4.0.5.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'numeral.js')}"></apex:includeScript>
+    <apex:includeScript value="https://www.google.com/jsapi"></apex:includeScript>
+    
+    
+    <style>
+        .table {
+            font-size: .98em;
+            width: 100%;
+            padding: 0em 1em 0em 1em;
+        }
+        
+        .loadingChart {
+            background-image: url("{!URLFOR($Resource.CustomerDashboardResources, '/loading.gif')}");
+            background-repeat: no-repeat;
+            background-position: center center;
+            padding: 10em;
+            border: none;
+            color: grey;
+        }
+        
+        .noChartData {
+            padding: 5em;
+            border: none;
+            color: grey;
+        }
+        .text-center {
+            text-align: center;
+        }
+    
+    </style>
+    
+    <script id="tableWithGroupedColumnsTemplate" type="text/x-handlebars-template">
+        <table class="table table-striped">
+            <thead>
+                 {{#if showTableHeading}}
+                    <tr>
+                        {{#each tableHeadings}}
+                            
+                            {{#if isVisible}}
+                                <th {{#setTextAlign type}} {{/setTextAlign}} {{#ifEquals type 'spacer'}} class="spacer-column" {{/ifEquals}}>
+                                    {{label}}
+                                </th>
+                            {{/if}}
+                        {{/each}}
+                    </tr>
+                {{/if}}
+            </thead>
+            <tbody>
+                {{#each rows}}
+                <tr>
+                    {{#each columnGroup}}
+                        {{#each columns}}
+                            {{#if isVisible}}
+                                {{#ifEquals type 'photo'}}
+                                     <td class="photoColumn">
+                                        <img src="{{value}}"  width="45px" height="45px"></img>
+                                    </td>
+                                {{else}}
+                                    <td {{#setTextAlign type}} {{/setTextAlign}} >
+                                        <span class="{{styleClass}}">
+                                            {{formatValue value type}}
+                                        </span>
+
+                                    </td>
+                                {{/ifEquals}}
+                            {{/if}}
+                        {{/each}}
+                             
+                        <!-- add a spacer column -->
+                        <td style="background-color: white; width:45px;"></td> 
+                        
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+    
+
+    <c:CustomerDashboardJS ></c:CustomerDashboardJS>
+
+    <script type="text/javascript">
+     google.load("visualization", "1", {packages:["geochart", "linechart"]});
+     google.setOnLoadCallback( chartAPIReady );
+     
+     var tableWithGroupedColumnsTemplate;
+     
+     
+    
+     
+     jQuery(document).ready(function($) {
+        
+         Handlebars.registerHelper('ifEquals', function(a, b, opts) {
+                if (a == b) {
+                    return opts.fn(this);
+                } else {
+                    return opts.inverse(this);
+                }
+            });
+            Handlebars.registerHelper('setTextAlign', function(a, opts) {
+                if ( a == 'number' || a == 'percent' ) {
+                    return  'style="text-align:right;"';
+                } else {
+                    return  'style="text-align:left;"';
+                }
+                
+            });
+            
+            
+             Handlebars.registerHelper('formatValue', function(num, formatAs, opts) {
+                if (formatAs == 'number' ) {
+                    return numeral(num).format('0,0');
+                } else if ( formatAs == 'percent' ) {
+                    return numeral(num).format('0,0.0%');
+                } else if ( formatAs == 'currency' ) {
+                    return numeral(num).format('$0,0');
+                } else {
+                    return num;
+                }
+            });
+            
+        
+        
+        
+        tableWithGroupedColumnsTemplate = Handlebars.compile($("#tableWithGroupedColumnsTemplate").html());
+        
+     
+     });
+     
+     
+     function chartAPIReady( ) {
+         _.each( reports , function( rpt ) {
+             runReportAsync( rpt );
+         } );
+         
+     }
+     
+     
+     function runReportAsync(report, callback ){
+            if ( !report.isEnabled ) return;
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.CustomerDashboardCtrl.runReportAsync}',
+                report.name,
+                report.renderTo,
+                {!reportFilter},
+                function( reportInstanceId, event) {
+                    report.instanceId = reportInstanceId;
+                    isReportDataReady(reportInstanceId, report);
+                });
+        }
+     
+     
+     
+     function isReportDataReady(reportInstanceId, report) {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.CustomerDashboardCtrl.isReportDataReady}',
+                reportInstanceId,
+                function (result, event) {
+                    if (event.status) {
+                        if ( result.status == 'Running' || result.status == 'New') {
+                            isReportDataReady( reportInstanceId, report ); // restart the poll
+                        } else {
+                            // factMap is an object not an array
+                             
+                            if ( report.name == 'Top_5_Shippers3' ) {
+                                //console.log('Top_5_Shippers_Lost_ST_Final');
+                               console.log(' -- result ', result);
+                                
+                            }
+                            if ( report.name == 'Top_5_Shippers_Lost_ST_Final' ) {
+                               console.log('Top_5_Shippers_Lost_ST_Final');
+                               console.log(' -- report ', report);
+                               console.log(' -- result ', result);
+                                
+                            }                           
+                            
+                            
+                            //check to see if any results returned
+                            //  -- get the grand total row
+                            //  -- check to see if any of the totals are > 0
+                            var grandTotalRow = _.findWhere( result.reportResults.factMap, {key: 'T!T'} );
+                            var anyTotals = _.reject( grandTotalRow.aggregates, function( item ){
+                                 if ( item.value == 0 || _.isUndefined( item.value ) ) {
+                                    return true;
+                                 } else {
+                                    return false;
+                                 }    
+                            });
+                            
+
+                            if( anyTotals.length > 0 ) {
+                                
+                                if ( report.visualizationType == 'table') {
+                                    if ( report.reportType == 'tabular') {
+                                        result.data = formatDataForTableTabular( result, report );
+                                    } else if ( report.reportType == 'subgroups') {
+                                        result.data = formatDataForTableSubGroups( result, report );
+                                        
+                                    } else {
+                                        result.data = formatDataForTable( result, report );
+                                    }
+                                    renderHtmlTable(report, result);
+
+                                } else if ( report.visualizationType == 'line-chart') {
+                                    result.data = formatDataForGViz( result, report );
+                                    renderGViz( report, result );
+                                    
+                                } else if ( report.visualizationType == 'geo-chart') {
+                                    result.data = formatDataForGViz( result, report );
+                                    renderGViz( report, result );
+                                }    
+
+                            } else {
+                                // no data
+                                $('#' + report.renderTo).removeClass( 'loadingChart');
+                                $('#' + report.renderTo).html($('#noChartData').html());
+                            }
+                            
+                        }
+                       
+                    }
+                }, {escape: false, timeout: 120000, buffer: false});
+        }
+     
+     
+     var reports = new Array(
+        {
+            name : 'Business_By_Lane_Shipper2', 
+            renderTo: 'Business_By_Lane_Shipper',
+            instanceId: null,
+            visualizationType: 'geo-chart',
+            isEnabled: true
+       },
+       {
+            name : 'Business_By_Lane_Consignee', 
+            renderTo: 'Business_By_Lane_Consignee',
+            instanceId: null,
+            visualizationType: 'geo-chart',
+            isEnabled: true
+       }, 
+       {
+             name : 'Business_By_Lane_Shipper2', 
+             renderTo: 'Business_By_Lane_Shipper_Table',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 1,
+             sortColumnName: 'FORMULA1',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 3,
+             showTableHeading: true,
+             isEnabled: true,
+             columns: [
+                        {name: 'rowLabel', label: 'State', type: 'string', isVisible: true, order: 1},
+                         {name: 'FORMULA1', label: 'Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 2},
+                         {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                     ]
+       },
+       {
+             name : 'Business_By_Lane_Consignee', 
+             renderTo: 'Business_By_Lane_Consignee_Table',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 1,
+             sortColumnName: 'FORMULA1',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 3,
+             showTableHeading: true,
+             isEnabled: true,
+             columns: [
+                        {name: 'rowLabel', label: 'State', type: 'string', isVisible: true, order: 1},
+                         {name: 'FORMULA1', label: 'Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 2},
+                         {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                     ]
+       }
+       , 
+       { 
+             name : 'Top_5_Shippers', 
+             renderTo: 'Top_5_Shippers',
+             instanceId: null,
+             rowLimit: 5,
+             sortOrder: 'desc',
+             sortColumnNumber: 2,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'subgroups',
+             isEnabled: true,
+             columns: [
+                         {name: 'Probill__c.Shipper_Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: '', order: 1},
+                         {name: 'Probill__c.Shipper_State__c', label: 'State', type: 'string', isVisible: true, styleClass: '', order: 2},
+                         {name: 'total', label: 'Revenue', type: 'currency', isVisible: true, styleClass: '', order: 3}
+                            
+                     ]
+       } ,
+       {
+             name : 'Top_5_Shippers_Lost_ST_Final', 
+             renderTo: 'Top_5_Shippers_Lost_ST',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 2,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'tabular',
+             isEnabled: true,
+             columns: [
+                        {name: 'Shipper_Consignee__c.Account__c', label: 'Account', type: 'string', isVisible: false, order: 1},
+                         {name: 'Shipper_Consignee__c.Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: 'bold-text', order: 3},
+                         {name: 'Shipper_Consignee__c.State__c', label: 'State', type: 'string', isVisible: true, styleClass: 'bold-text', order: 4},
+                         {name: 'Shipper_Consignee__c.Change_Short_Term_Revenue__c', label: 'Change in Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 5}
+                     ]
+       } ,
+       {
+             name : 'Top_5_Shippers_Lost_LT', 
+             renderTo: 'Top_5_Shippers_Lost_LT',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 3,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'tabular',
+             isEnabled: true,
+             columns: [
+                         {name: 'Shipper_Consignee__c.Account__c', label: 'Account', type: 'string', isVisible: false, order: 1},
+                         {name: 'Shipper_Consignee__c.Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: 'bold-text', order: 2},
+                         {name: 'Shipper_Consignee__c.State__c', label: 'State', type: 'string', isVisible: true, styleClass: 'bold-text', order: 3},
+                         {name: 'Shipper_Consignee__c.Change_Long_Term_Revenue__c', label: 'Change in Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 5}
+                    ]
+       },
+       {
+             name : 'Top_5_Consignees', 
+             renderTo: 'Top_5_Consignees',
+             instanceId: null,
+             rowLimit: 5,
+             sortOrder: 'desc',
+             sortColumnNumber: 2,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'subgroups',
+             isEnabled: true,
+             columns: [
+                        {name: 'Probill__c.Shipper_Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: '', order: 1},
+                         {name: 'Probill__c.Shipper_State__c', label: 'State', type: 'string', isVisible: true, styleClass: '', order: 2},
+                         {name: 'total', label: 'Revenue', type: 'currency', isVisible: true, styleClass: '', order: 3}
+                       ]
+       } ,
+       {
+             name : 'Top_5_Consignees_Lost_ST_Final', 
+             renderTo: 'Top_5_Consignees_Lost_ST',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 2,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'tabular',
+             isEnabled: true,
+             columns: [
+                        {name: 'Shipper_Consignee__c.Account__c', label: 'Account', type: 'string', isVisible: false, order: 1},
+                         {name: 'Shipper_Consignee__c.Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: 'bold-text', order: 3},
+                         {name: 'Shipper_Consignee__c.State__c', label: 'State', type: 'string', isVisible: true, styleClass: 'bold-text', order: 4},
+                         {name: 'Shipper_Consignee__c.Change_Short_Term_Revenue__c', label: 'Change in Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 5}
+                  ]
+       } ,
+       {
+             name : 'Top_5_Consignees_LT_Final', 
+             renderTo: 'Top_5_Consignees_Lost_LT',
+             instanceId: null,
+             rowLimit: 0,
+             sortOrder: 'desc',
+             sortColumnNumber: 3,
+             sortColumnName: '',
+             visualizationType: 'table',
+             displayUserPhoto: false,
+             groupColumns: true,
+             numberOfGroupColumns: 0,
+             showTableHeading: true,
+             reportType: 'tabular',
+             isEnabled: true,
+             columns: [
+                         {name: 'Shipper_Consignee__c.Account__c', label: 'Account', type: 'string', isVisible: false, order: 1},
+                         {name: 'Shipper_Consignee__c.Name__c', label: 'Name', type: 'string', isVisible: true, styleClass: 'bold-text', order: 3},
+                         {name: 'Shipper_Consignee__c.State__c', label: 'State', type: 'string', isVisible: true, styleClass: 'bold-text', order: 4},
+                         {name: 'Shipper_Consignee__c.Change_Long_Term_Revenue__c', label: 'Change in Revenue', type: 'currency', isVisible: true, styleClass: 'bold-text', order: 5}
+                     ]
+       }
+       
+       
+       );
+   
+     
+     
+    </script>
+
+    <style type="text/css">
+        .chartGroup
+        {
+            display:block;
+            width:1400px;
+        }
+        div.chartflow
+        {
+            float:left;
+            margin:10px;
+            width:400px;
+        }
+        div.chartSectionTitle
+        {
+            width:100%;
+            height:30px;
+            font-size:14px;
+            font-weight:bold;
+            text-align:center;
+            line-height:30px;
+        }
+        div.dashboardBtn
+        {
+            width:100%;
+            text-align:center;
+        }
+        div.clr
+        {
+            clear:both;
+        }
+        a:hover{
+            cursor:default;
+        }
+        area:hover{
+            cursor:default;
+        }
+    </style>
+    <script>       
+        
+        function drilldownreport(reportId, reportFilters)
+        {
+            var baseUrl = '{!baseUrl}';
+            var location = baseUrl + "/" + reportId + "?dilldown=1";
+
+           // var location = "https://na16.salesforce.com/" + reportId + "?drilldown=1";
+      
+            // sandbox
+           //var location = "https://c.cs10.visual.force.com/" + reportId + "?drilldown=1";
+           
+           
+           var paramNum = 0;
+           if ( reportId == '00Oj0000004BdVU'           // Claims Ratio-Days to File
+                || reportId == '00Oj0000004BdVZ'        // Claims Ratio-Days to Resolve
+                || reportId == '00Oj0000004Msoy'        // Claims Ratio by Shipment-Filed
+                || reportId == '00Oj0000004Msoo'        // Claims Ratio by Shipment-Paid
+                || reportId == '00Oj0000004Msp3'        // Claims Ratio by Revenue-Paid
+                || reportId == '00Oj0000004Qhjv'        // Corrections-Weight
+                || reportId == '00Oj0000004BffL'        // Corrections-Class
+                || reportId == '00Oj0000004BTAd'        // Shipments by Service Level-Guranteed
+                || reportId == '00Oj0000004BWcu'        // Compliance Shipments
+                ) {
+
+                paramNum = 1; 
+           
+           } else if ( 
+                    reportId == '00Oj0000004BStN'       // AR Aging
+                ) {
+                paramNum = 2;
+           }
+           
+            
+           var columnName;
+           _.each( reportFilters, function(filter){
+                var operator = "=eq";
+                if ( filter.column == 'Probill__c.Pickup_Day__c' ) {
+                    columnName = '00Nj00000093HpL';  // pickup day is a custom field so we have to reference it by the field id.  TODO: Need to store this in a custom setting.
+                    operator = "=ge";
+                    //columnName = '00NJ00000021DYN';  // sandbox
+                } 
+                else if ( filter.column ==  'ACCOUNT_ID' ){ //truncate to 15 digits
+                    filter.value = filter.value.substring(0,15);
+                    columnName = filter.column;
+                }
+                else {
+                    columnName = filter.column;
+                }
+                location += "&pc" + paramNum + "=" + columnName + "&pv" + paramNum + "=" + filter.value + "&pn" + paramNum + operator;
+                
+                paramNum++;
+           } ); 
+           
+           
+            
+            /*
+            
+            if(reportFilters.length > 0) {
+                //[{column:"Probill__c.Delivery_Start__c", operator:"equals",value:"THIS_YEAR"},{column:"ACCOUNT_ID",operator:"equals",value:"001j000000M6FvXAAV"},{column:"USERS.NAME",operator:"equals",value:"Roman Clark"}]
+                var filters = "";
+                var firstReportFilter = "";
+                var firstFilter = reportFilters[0];
+                var firstFilterColumnName = firstFilter.column;
+                
+                if(firstFilterColumnName == "Probill__c.Pickup_Day__c")
+                {
+                    firstFilterColumnName = "00Nj00000093HpL";
+                     
+                     // sandbox
+                     //firstFilterColumnName = "00NJ00000021DYN";
+  
+                }
+                
+                var firstFilterValue = firstFilter.value;
+                if(firstFilterValue.search("001") != -1 && firstFilterValue.length == 18)
+                {
+                    firstFilterValue = firstFilterValue.substring(0, 15);
+                }
+                firstReportFilter = "&pc" + paramNum + "=" + firstFilterColumnName + "&pv" + paramNum + "=" + firstFilterValue + "&pn" + paramNum + "=eq";
+                
+                paramNum++;
+                
+                filters += firstReportFilter;
+                for(var i = paramNum; i < reportFilters.length; i++)
+                {
+                    var thisReportFilter = "";
+                    var thisFilter = reportFilters[i];
+                    var filterColumnName = thisFilter.column;
+                    if(filterColumnName == 'Probill__c.Pickup_Day__c')
+                    {
+                        filterColumnName = "00Nj00000093HpL";
+                        
+                        //sandbox 
+                        // filterColumnName = "00NJ00000021DYN";
+                    }
+                    var thisFilterValue = thisFilter.value;
+                    if(thisFilterValue.search("001") != -1 && thisFilterValue.length == 18)
+                    {
+                        thisFilterValue = thisFilterValue.substring(0, 15);
+                    }
+                    //thisReportFilter = "&drillcol" + (i + 1) + "=" + filterColumnName + "&drillval" + (i + 1) + "=" + thisFilterValue + "&drillop" + (i + 1) + "=equals";
+                    thisReportFilter = "&pc" + (i + 1) + "=" + filterColumnName + "&pv" + (i + 1) + "=" + thisFilterValue + "&pn" + (i + 1) + "=eq";
+                    
+                    filters += thisReportFilter;
+                }
+                location += filters;
+            }
+           
+            */
+           
+            //console.log('-- location ', location);
+            
+            window.open(location, "_blank");
+        }
+    </script>
+    <apex:form id="form">
+        <apex:pageBlock title="Customer Dashboard" >
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <table width="400px" border="0">
+                            <tr>
+                                <td style="text-align:right;float:left;"><b>Time Period&nbsp;</b>
+                                
+                                    <apex:selectList value="{!DateFilterOption}" size="1">
+                                        <apex:selectOptions value="{!DateOptions}"></apex:selectOptions>
+                                    </apex:selectList><br/><br/>
+                                    
+                                    <b style="float:left;">Account&nbsp;</b>
+                                    <apex:inputField value="{!filterContact.AccountId}"/><br/><br/>
+                                    <b style="float:left;">Territory&nbsp;</b>
+                                    
+                                    <apex:selectList value="{!TerritoryUser}" size="1">
+                                        <apex:selectOptions value="{!UserOptions}"></apex:selectOptions>
+                                     </apex:selectList><br/><br/>
+                                    
+                        <!--       //     <b style="float:left; font-size:14px;">For Accessorial Reports:</b><br/><br/>
+                                    <b style="float:left;">Manager&nbsp;</b>
+                                    
+                                    <apex:selectList value="{!Manager}" size="1">
+                                        <apex:selectOptions value="{!ManagerOptions}"></apex:selectOptions>
+                                    </apex:selectList><br/><br/>
+                                    
+                                    <b style="float:left;">Category&nbsp;</b>
+                                    
+                                    <apex:selectList value="{!Category}" size="1">
+                                        <apex:selectOptions value="{!CategoryOptions}"></apex:selectOptions>
+                                    </apex:selectList><br/>
+                        -->         </td>  
+                                <td style="text-align:center;vertical-align:middle;padding-left:20px;">
+                                    <apex:commandbutton value="Filter Reports" action="{!setNewReportFilters}"/>
+                             </td>                              
+                            </tr>
+                        </table>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1">
+
+<!-- Row 1 Monthly Revenue, Shipments, Tonnage    -->     
+        
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Revenue</div>
+                            <analytics:reportChart developerName="Monthly_Revenue_CY_vs_PY"   hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTv', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Shipments</div>
+                            <analytics:reportChart developerNAme="Monthly_Shipments_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTw', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Monthly Tonnage</div>
+                            <analytics:reportChart developerNAme="Monthly_Tonnage_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTx', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+               
+
+
+<!-- Row 2 Avg Revenue, Shipments, Tonnage           -->
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                       <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Revenue</div>
+                            <!-- 00Oj0000004QhTs -->
+                            <analytics:reportChart developerName="Avg_Daily_Revenue_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false" cacheResults="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTs', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Shipments</div>
+                            <!-- 00Oj0000004QhTt  -->
+                            <analytics:reportChart developerName="Avg_Daily_Shipments_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTt', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Daily Tonnage</div>
+                            <!-- 00Oj0000004QhTu -->
+                            <analytics:reportChart developerName="Avg_Daily_Tonnage_CY_vs_PY" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004QhTu', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                  
+<!-- Row 3 Biz by Lane-Shippers, Shipper Rev by State Table,  -->         
+                
+               <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                     
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Shipper</div>
+                            <div id="Business_By_Lane_Shipper" class="loadingChart"></div>
+                        </div>
+                     
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Shipper Table</div>
+                            <div id="Business_By_Lane_Shipper_Table" class="loadingChart"></div>
+                        </div>
+                      
+                     <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+<!-- Row 4  Top 5 Shipper, Top 5 Shipper Lost ST, TOp 5 Shipper Lost LT -->         
+                
+                
+               <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                     
+                     
+                    <div class="chartflow"  style="min-height:250px;">
+                        <div class="chartSectionTitle">Top 5 Shippers</div>
+                        <div id="Top_5_Shippers" class="loadingChart"></div>
+                    </div>
+                     
+                    
+                                                                   
+                    <div class="chartflow">
+                        <div class="chartSectionTitle">Top 5 Shippers Lost ST</div>
+                        <div id="Top_5_Shippers_Lost_ST"  class="loadingChart"></div>
+                    </div>
+                    
+                    
+                  
+                     <div class="chartflow">
+                        <div class="chartSectionTitle">Top 5 Shippers Lost LT</div>
+                        <div id="Top_5_Shippers_Lost_LT"  class="loadingChart"></div>
+                    </div>
+                 
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                     
+                      
+<!-- Row 5 Biz by Lane-Consignee, Consignee Rev by State Table   -->
+         
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                       <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Consignee</div>
+                            <div id="Business_By_Lane_Consignee" class="loadingChart"></div>          
+                        </div>
+                        
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Business by Lane-Consignee Table</div>
+                             <div id="Business_By_Lane_Consignee_Table" class="loadingChart"></div>
+                        
+                        </div>
+                        
+          
+                  <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+             
+
+<!-- Row 6  Top 5 Consignee, Top 5 Consignee Lost   -->
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        
+                        
+                         
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Top 5 Consignees</div>
+                            <div id="Top_5_Consignees" class="loadingChart"></div>
+                        </div>
+                           
+                        
+                          
+                        
+                        <div class="chartflow" style="min-height:250px;">
+                            <div class="chartSectionTitle">Top 5 Consignees Lost ST</div>
+                            <div id="Top_5_Consignees_Lost_ST" class="loadingChart"></div>
+                        </div>
+                        
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Top 5 Consignees Lost LT</div>
+                            <div id="Top_5_Consignees_Lost_LT" class="loadingChart"></div>
+                        </div>
+                        
+
+                    <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>                          
+           
+<!-- Row 7 On Time Shipments, Length Linehaul, Days in Transit  --> 
+         
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Shipments by On Time Status</div>
+                            <analytics:reportChart reportId="00Oj0000004BTCF" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BTCF', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Days in Transit</div>
+                            <analytics:reportChart reportId="00Oj0000004Mspw" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Mspw', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Average Length of Line Haul</div>
+                            <analytics:reportChart reportId="00Oj0000004BdWS" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdWS', {!ReportFilter})"/></div>
+                        </div>
+                
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                   
+     
+     
+      <!-- Row 8 CR Days to File, Days to Resolve,   --> 
+               
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio-Days to File</div>
+                            <analytics:reportChart reportId="00Oj0000004BdVU" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdVU', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio-Days to Resolve</div>
+                            <analytics:reportChart reportId="00Oj0000004BdVZ" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004BdVZ', {!ReportFilter})"/></div>
+                        </div>
+                        <div class="clr"></div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem>
+                
+          
+          
+          
+             
+             
+<!--> Row 9 CR by Shipment-Filed, by Shipment-Paid   by Revenue-Paid  --> 
+              
+                 <apex:pageBlockSectionItem >
+                    <apex:outputPanel styleclass="chartGroup">
+                        
+                         <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Shipment-Filed</div>
+                            <analytics:reportChart reportId="00Oj0000004Msoy" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msoy', {!ReportFilter})"/></div>
+                        </div>
+                     <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Shipment-Paid</div>
+                            <analytics:reportChart reportId="00Oj0000004Msoo" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msoo', {!ReportFilter})"/></div>
+                        </div> 
+                        <div class="chartflow">
+                            <div class="chartSectionTitle">Claims Ratio by Revenue-Paid</div>
+                            <analytics:reportChart reportId="00Oj0000004Msp3" hideonerror="false" size="small" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                            <div class="dashboardBtn"><input type="button" class="btn drilldownBtn" value="Drill down" onclick="drilldownreport('00Oj0000004Msp3', {!ReportFilter})"/>
+                            </div>
+                        </div>
+                    </apex:outputPanel>                
+                </apex:pageBlockSectionItem> 
+                              
+            
+            </apex:pageBlockSection>
+        </apex:pageBlock> 
+    </apex:form>
+    
+    
+        <!-- 
+            div displayed when there is no chart data 
+        -->
+        <div id="noChartData" style="display:none;">
+            <div class="text-center noChartData">
+                <h2 style="display:block;">No Data Found</h2>
+            </div>
+        </div>
+    
+    
+<script>
+
+
+    $( document ).ready(function() { //Brute force Removing attributes bound to link behavior
+        $('a.analyticsCordaChart').attr('data-aura-rendered-by','');
+        $('a.analyticsCordaChart').attr('href','#');
+        $('a.analyticsCordaChart').attr('class','');
+        $('div.spacer').attr('class','');
+    });
+    
+     
+</script>
+</apex:page>

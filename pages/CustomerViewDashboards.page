@@ -1,0 +1,90 @@
+<apex:page id="page" sidebar="false" title="Customer View Charts" readOnly="true"  controller="CustomerViewDashboardsController">
+    <html>
+        <head>
+            <apex:includeScript value="https://www.google.com/jsapi"/>
+            <style type="text/css">
+                .container
+                {
+                    width:95%;
+                    margin:15px auto;
+                }
+                .container .pageHeader
+                {
+                    width:100%;
+                    height:40px;
+                    background-color:#474747;
+                    padding-right:15px;
+                }
+                .container .chart
+                {
+                    width:360px;
+                    height:360px;
+                    float:left;
+                    margin-right:10px;
+                    margin-top:10px;
+                }
+                span.QuarterBrandInfo
+                {
+                    font-weight:bold;
+                    color:#FFF;
+                    margin-left:15px;
+                    line-height:40px;
+                    font-size:18px;
+                    margin-right:20px;
+                }
+                span.QuarterInfo
+                {
+                    line-height:40px;
+                    font-size:18px;
+                    color:#FEAF6C;
+                }
+                a.changeQuaLet
+                {
+                    color:red;
+                    line-height:40px;
+                    font-weight:bold;
+                    font-size:18px;
+                    margin-left:15px;
+                    text-decoration:none;
+                }
+                a.changeQuaRit
+                {
+                    color:red;
+                    font-weight:bold;
+                    line-height:40px;
+                    font-size:18px;
+                    margin-left:5px;
+                    text-decoration:none;
+                }
+                .actionStatus
+                {
+                    color:red;
+                    margin-left:15px;
+                    font-size:12px;
+                    line-height:30px;
+                }
+            </style>                   
+        </head>
+        <body>
+            <apex:form id="form">
+                <apex:sectionHeader title="Customer View Dashboards" subtitle="{!CurrentYear} Q{!CurrentQuarter}" id="sectionHeader"/><!--- {!CurrentUser.Name}-->
+                <div class="container">
+                    <div class="pageHeader">
+                        <span class="QuarterBrandInfo">Fiscal Quarter</span>
+                        <span class="QuarterInfo" id="quarterInfo">{!CurrentYear}Q{!CurrentQuarter}</span>
+                    </div>
+                    <div class="chart">
+                        <c:MontlyRevenueDashboard acctId="{!AccountId}" year="{!CurrentYear}" quarter="{!CurrentQuarter}"/>
+                    </div>
+                    <div class="chart">
+                        <c:MonthlyShipment acctId="{!AccountId}" year="{!CurrentYear}" quarter="{!CurrentQuarter}"/>
+                    </div>      
+                </div>
+                <script type="text/javascript">
+                    var currentYear = parseInt("{!CurrentYear}");
+                    var currentQuarter = parseInt("{!CurrentQuarter}");                   
+                </script>
+            </apex:form>
+        </body>
+    </html> 
+</apex:page>

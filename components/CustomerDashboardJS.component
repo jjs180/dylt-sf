@@ -1,0 +1,464 @@
+<apex:component >
+<script>
+       
+    var states = new Array(
+                {name: 'Alabama', abbreviation: 'AL'},
+                {name: 'Alaska', abbreviation: 'AK'},
+                {name: 'Arizona', abbreviation: 'AZ'},
+                {name: 'Arkansas', abbreviation: 'AR'},
+                {name: 'California', abbreviation: 'CA'},
+                {name: 'Colorado', abbreviation: 'CO'},
+                {name: 'Connecticut', abbreviation: 'CT'},
+                {name: 'Delaware', abbreviation: 'DE'},
+                {name: 'District Of Columbia', abbreviation: 'DC'},
+                {name: 'Florida', abbreviation: 'FL'},
+                {name: 'Georgia', abbreviation: 'GA'},
+                {name: 'Hawaii', abbreviation: 'HI'},
+                {name: 'Idaho', abbreviation: 'ID'},
+                {name: 'Illinois', abbreviation: 'IL'},
+                {name: 'Indiana', abbreviation: 'IN'},
+                {name: 'Iowa', abbreviation: 'IA'},
+                {name: 'Kansas', abbreviation: 'KS'},
+                {name: 'Kentucky', abbreviation: 'KY'},
+                {name: 'Louisiana', abbreviation: 'LA'},
+                {name: 'Maine', abbreviation: 'ME'},
+                {name: 'Montana', abbreviation: 'MT'},
+                {name: 'Nebraska', abbreviation: 'NE'},
+                {name: 'Nevada', abbreviation: 'NV'},
+                {name: 'New Hampshire', abbreviation: 'NH'},
+                {name: 'New Jersey', abbreviation: 'NJ'},
+                {name: 'New Mexico', abbreviation: 'NM'},
+                {name: 'New York', abbreviation: 'NY'},
+                {name: 'North Carolina', abbreviation: 'NC'},
+                {name: 'North Dakota', abbreviation: 'ND'},
+                {name: 'Ohio', abbreviation: 'OH'},
+                {name: 'Oklahoma', abbreviation: 'OK'},
+                {name: 'Oregon', abbreviation: 'OR'},
+                {name: 'Maryland', abbreviation: 'MD'},
+                {name: 'Massachusetts', abbreviation: 'MA'},
+                {name: 'Michigan', abbreviation: 'MI'},
+                {name: 'Minnesota', abbreviation: 'MN'},
+                {name: 'Mississippi', abbreviation: 'MS'},
+                {name: 'Missouri', abbreviation: 'MO'},
+                {name: 'Pennsylvania', abbreviation: 'PA'},
+                {name: 'Rhode Island', abbreviation: 'RI'},
+                {name: 'South Carolina', abbreviation: 'SC'},
+                {name: 'South Dakota', abbreviation: 'SD'},
+                {name: 'Tennessee', abbreviation: 'TN'},
+                {name: 'Texas', abbreviation: 'TX'},
+                {name: 'Utah', abbreviation: 'UT'},
+                {name: 'Vermont', abbreviation: 'VT'},
+                {name: 'Virginia', abbreviation: 'VA'},
+                {name: 'Washington', abbreviation: 'WA'},
+                {name: 'West Virginia', abbreviation: 'WV'},
+                {name: 'Wisconsin', abbreviation: 'WI'},
+                {name: 'Wyoming', abbreviation: 'WY'},
+                {name: 'Ontario', abbreviation: 'ON'},
+                {name: 'Quebec', abbreviation: 'QC'},
+                {name: 'British Columbia', abbreviation: 'BC'},
+                {name: 'Nova Scotia', abbreviation: 'NS'},
+                {name: 'Northwest Territories', abbreviation: 'NWT'},
+                {name: 'Puerto Rico', abbreviation: 'PR'}
+                );
+     
+     
+     
+          
+        function renderGViz( report, result ) {
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Date');
+            dataTable.addColumn('number', 'Score');
+            dataTable.addRows( result.data );
+            
+            var reportFormat = result.reportResults.reportMetadata.reportFormat;
+            
+     
+            $('#' + report.renderTo).removeClass('loadingChart');
+            var chartView = new google.visualization.DataView(dataTable);
+            var chart;
+            
+            if ( report.visualizationType == 'line-chart' ) {
+                options = {
+                            title: '',
+                            hAxis: { slantedText: true, slantedTextAngle: 80 },
+                            legend:{ position: 'none' },
+                            height: 300,
+                            chartArea: { left: 30, top: 30, width: '95%' }
+                        };
+                chart = new google.visualization.LineChart(document.getElementById(report.renderTo));
+            } else if ( report.visualizationType == 'geo-chart' ) {
+                
+                var formatter = new google.visualization.NumberFormat({negativeColor: 'red', negativeParens: true, pattern: '$###,###'});
+                formatter.format(dataTable, 1);    
+                
+                options = {
+                            region: 'US',
+                            resolution: 'provinces',
+                            colorAxis: {colors: ['#e5f2ff', '#003366']},
+                            title: '',
+                            //height: 300,
+                            legend:{ position: 'none' }
+                        };
+                        
+                chart = new google.visualization.GeoChart(document.getElementById(report.renderTo));
+            } 
+            chart.draw(chartView, options);
+        }
+        
+
+      
+     
+     
+    function formatDataForGViz( result, report ) {
+        // format data for google visualizations
+        var reportData = new Array();
+        var reportFormat = result.reportResults.reportMetadata.reportFormat;
+        var groupingVals;
+        
+        if ( reportFormat == 'MATRIX' ) {
+            groupingVals = _.reject( result.reportResults.groupingsAcross.groupings, function( item ) {
+                 if ( item.label == '-' || _.isUndefined( item.value ) ) {
+                    return true; 
+                 } else {
+                     return false;
+                 }
+            });
+        } else if ( reportFormat == 'SUMMARY' ) {
+            groupingVals = _.reject( result.reportResults.groupingsDown.groupings, function( item ) {
+                 if ( item.label == '-' || _.isUndefined( item.value ) ) {
+                    return true; 
+                 } else {
+                     return false;
+                 }
+            });
+        }    
+    
+        _.each( groupingVals, function(item) {
+            // get the data
+            var fmItem;
+            if ( reportFormat == 'MATRIX' ) {
+                fmItem = _.findWhere( result.reportResults.factMap, {key: 'T!' + item.key} );
+            } else if ( reportFormat == 'SUMMARY' ) {
+                fmItem = _.findWhere( result.reportResults.factMap, {key: item.key + '!T'} );              
+            }
+            
+            var itemLabel = item.label;
+            if ( report.trimDateLabel ) {
+                // abbreviate dates ie September = Sep
+                itemLabel = itemLabel.substring(0,3) + '  ' + itemLabel.substring( item.label.indexOf(' '), item.label.length)
+            }
+    
+            var val = fmItem.aggregates[0].value;
+            var dataRow = [ itemLabel, val ]; // TODO: ???
+            reportData.push( dataRow);    
+        });
+        return reportData;         
+    }
+
+          
+     
+     
+     
+   /*  
+        For table visualizations
+     
+     */
+     
+    function formatDataForTableTabular( result, report ) { 
+        var reportData = new Array();
+        
+        var rows = result.reportResults.factMap['T!T'].rows;
+        _.each( rows, function( row ) {
+            var reportDataRow = { columns: [] };
+            _.each( row.dataCells, function( col, index ) {
+                var colValue;
+                if ( _.isUndefined( col.value ) ) {
+                    colValue = '';
+                } else {
+                    colValue = col.value;
+                } 
+                if ( _.isObject( col.value ) ) {
+                    colValue = _.values(col.value)[0];
+                }
+                
+                var columnName = result.reportResults.reportMetadata.detailColumns[index];
+                var columnProperties = _.find( report.columns, { name : columnName } );
+                
+                reportDataRow.columns.push( { name: columnName, value: colValue, isVisible: columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+                
+            });
+            
+            reportData.push( reportDataRow );
+            
+            
+        });
+        return reportData;
+     
+    }
+     
+     
+     function formatDataForTableSubGroups( result, report ) {
+        // format data for html table visualizations
+        var reportData = new Array();
+        
+       
+        var groupingVals = result.reportResults.groupingsDown.groupings;
+        //console.log('g: ', groupingVals);
+        
+        _.each( groupingVals, function( group1 ){
+            //console.log('item', group1);
+            var key = group1.key;
+            var group1Label = group1.label;
+            
+            _.each( group1.groupings, function( group2,index ) {
+                var reportDataRow = { columns: [] };
+                
+                // retrieve data
+                //console.log('- group 2: ', group2);
+                var dataKey = group2.key + '!T'
+                var group2Data = result.reportResults.factMap[dataKey];
+                //console.log('group2Data', group2Data);
+                
+                
+                columnName = 'Probill__c.Shipper_Name__c';
+                columnProperties = _.find( report.columns, { name : columnName } );
+                reportDataRow.columns.push( { name : columnName, value :group1.label, isVisible : columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+                
+                
+                columnName = 'Probill__c.Shipper_State__c';
+                columnProperties = _.find( report.columns, { name : columnName } );
+                reportDataRow.columns.push( { name : columnName, value :group2.label, isVisible : columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+                
+                
+                var columnName = 'total';
+                var columnProperties = _.find( report.columns, { name : columnName } );
+                reportDataRow.columns.push( { name : columnName, value : group2Data.aggregates[0].value, isVisible : columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+
+                reportData.push( reportDataRow );
+                
+                
+            } );
+            
+        });
+        
+        
+        sortData( reportData, report.sortOrder, report.sortColumnNumber );
+            
+         // apply column order
+         sortColumnOrder( reportData );
+         
+         
+         // check to see if the report options say we want to limit the number of rows displayed
+         if ( report.rowLimit > 0 ) {
+             reportData = reportData.slice(0, report.rowLimit);
+         }
+        
+        
+        return reportData;
+     
+     }
+     
+     function formatDataForTable( result, report ) {
+      
+            // format data for html table visualizations
+            var reportData = new Array();
+
+            // filter out grouping rows that are empty
+            //  --- because of bad data, groups can be null or empty or contain a dash
+            var groupingVals = _.reject( result.reportResults.groupingsDown.groupings, function( item ) {
+                                        return item.label === '-';
+                                    } );
+                        
+            _.each( groupingVals, function(item) {             
+                var reportDataRow = { columns: [] };
+                
+                // add group/row label
+                
+                var rowLabel = item.label;
+                reportDataRow.columns.push( { name: 'rowLabel', value: rowLabel, isVisible: true, styleClass: '', order: 0 } );        
+                // get the data
+                // :mm changed to result.reportResults
+                var fmItem = _.findWhere( result.reportResults.factMap, {key: item.key+'!T'} );
+                          
+                // aggregates is an array.  each item in the array is a column of value, label
+                //   lookup columns settings in the report definition
+                //   lookup column names in the report metadata
+                _.each( fmItem.aggregates, function(aggregate, index){
+                    // column names are stored in the report metadata
+                    var columnName = result.reportResults.reportMetadata.aggregates[index];
+                    // remove the leading s! from column names
+                    columnName = columnName.slice(columnName.indexOf('!')+1);
+                    var columnProperties = _.find( report.columns, { name : columnName } );
+                    reportDataRow.columns.push( { name : columnName, value : aggregate.value, isVisible : columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+                });
+                reportData.push( reportDataRow );   
+              
+            });
+
+            
+           
+            // for tables with states we need to replace 
+            //  full state name with its abbreviation
+            if (report.renderTo == 'Business_By_Lane_Shipper_Table'
+                    || report.renderTo == 'Business_By_Lane_Consignee_Table') {
+                _.each( reportData, function( row ) {
+                    // the first row contains the full state name
+                    var stateName = row.columns[0].value;
+                    var foundState =_.findWhere( states, { name: stateName } );
+                    if (!_.isUndefined( foundState ) ) {
+                        row.columns[0].value = foundState.abbreviation;
+                    }       
+                });
+            }      
+            
+            sortData( reportData, report.sortOrder, report.sortColumnNumber );
+            
+            // apply column order
+            sortColumnOrder( reportData );
+            
+            
+            // check to see if the report options say we want to limit the number of rows displayed
+            if ( report.rowLimit > 0 ) {
+                reportData = reportData.slice(0, report.rowLimit);
+            }
+            
+             
+            return reportData;
+            
+        }     
+     
+     
+            
+        function renderHtmlTable( report, result ) {
+                
+            var html;
+            // add photo url, if specified
+            if ( report.displayUserPhoto ) {
+                    _.each( result.data, function( item ) {
+                        // find the user by name in our user Map
+                        var found = _.find( userList, function( u ) {
+                            return u.Name == item.columns[0].value;  // first element in item array is name
+                        });
+                        
+                        if (found) item.columns.unshift( { name: 'photoUrl', value: found.SmallPhotoUrl, type: 'photo', isVisible: true } );
+                    } );
+            }
+            
+            
+            if( report.groupColumns ) {
+                // split into x columns and render each separately
+                //   or add a column number to the data and handle it in the view template
+                
+                var groupedData = new Array();
+                var rowsPerColumn = Math.ceil( result.data.length / report.numberOfGroupColumns );
+
+                //groupedData.push( { columnGroup: [{},{},{}] } );
+                
+                var columnNum = 0;
+                var rowNum = 0;
+                // create column groupings
+                _.each( result.data, function( item, index) {
+                    // add a row if it does not exist
+                    if( groupedData[rowNum] == null ) groupedData.push( { columnGroup: [] } );
+                    groupedData[rowNum].columnGroup[columnNum] = item;
+                    rowNum++;
+                    if( index != 0  && (index+1) % rowsPerColumn == 0) {
+                        columnNum++;
+                        rowNum = 0;
+                    }
+                });
+
+
+                    
+                    // user result report data to build a columnHeading object
+                    //# number of column groupings
+                    var numberOfColumnGroupings = groupedData[0].columnGroup.length;
+                    
+                    var tableHeadings = new Array();
+                    // build gouped column headings
+                    for ( i=0; i<numberOfColumnGroupings; i++ ) {
+                        // go through each column and add to table heading
+                        tableHeadings.push( {name: '', label: '', type: 'photo', order: 0, isVisible: false } );
+                        _.each( report.columns, function( col ) {
+                            tableHeadings.push( col );
+                        });
+                        tableHeadings.push( {name: '', label: '', type: 'spacer', isVisible: true});
+                    }
+                
+                
+
+                result.data = groupedData;
+                                
+                html = tableWithGroupedColumnsTemplate({rows: result.data, columnNames: report.columns, showTableHeading: report.showTableHeading, tableHeadings: tableHeadings});
+            } else {
+                
+                 
+                html = tableTemplate({rows: result.data, columnNames: report.columns, showTableHeading: report.showTableHeading, displayUserPhoto: report.displayUserPhoto});
+            
+            }
+            
+            $('#' + report.renderTo).removeClass('loadingChart');
+            $('#' + report.renderTo ).html(html);
+        }
+        
+     
+     
+         
+    function mapColumnNames( resultColumnNames, reportColumnNames ){
+            var columnNames = new Array();
+            
+            // add the group row label column - it's the first entry in the report.columns array
+            columnNames.push(reportColumnNames[0]);
+
+            // match remaing columns
+            _.each( resultColumnNames, function(itemToFind) {
+                var foundItem = _.find( reportColumnNames, function( item ){
+                    if ( 's!' + item.name == itemToFind || item.name == 'RowCount' ) {
+                        return item;
+                    }
+                });
+                if ( foundItem ) { 
+                    columnNames.push( foundItem );
+                }
+            });
+            return columnNames;
+        }
+     
+      function sortData( reportData, order, columnNumber ) {
+            // sort report data in array 
+            //  since each row is an array we have to sort by a particular
+            //  column number
+            reportData.sort(function(a, b) {
+                    var result;
+                    if ( order == 'desc') {
+                        result = a.columns[columnNumber].value < b.columns[columnNumber].value ? 1 : -1;
+                    } else {
+                        result = a.columns[columnNumber].value > b.columns[columnNumber].value ? 1 : -1;
+                    }
+                    return result;
+                });
+     }
+     
+     
+     function sortColumnOrder( reportData ) {
+            // sort report data in array 
+            //  since each row is an array we have to sort by a particular
+            //  column number
+            var sortOrder = 'asc';
+            
+            _.each( reportData, function( item ) {
+                item.columns.sort(function(a, b) {
+                    var result;
+                    if ( sortOrder == 'desc') {
+                        result = a.order < b.order ? 1 : -1;
+                    } else {
+                        result = a.order > b.order ? 1 : -1;
+                    }
+                    return result;
+                });
+                
+            });
+            
+        }
+</script>
+</apex:component>

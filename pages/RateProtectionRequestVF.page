@@ -1,0 +1,48 @@
+<apex:page standardController="Rate_Protection_Request__c" extensions="RateProtectionRequestVFController">
+    <apex:sectionHeader title="Rate Protection Request Edit"/>
+    <apex:form >
+        <apex:pageBlock mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveRateProtection}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Information" columns="1">
+                <apex:inputField value="{!RateProtectionRequest.Account__c}" style="width:305px"  rendered="{!isAccount}"/>
+                <apex:inputField value="{!RateProtectionRequest.Lead__c}" style="width:305px" rendered="{!isLead}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="System Information" columns="1">
+                <apex:inputField value="{!RateProtectionRequest.Probill__c}"/>
+                <apex:inputField value="{!RateProtectionRequest.Volume_Quote__c}"/>
+                <apex:inputField value="{!RateProtectionRequest.Volume_Price__c}"/>
+                <apex:inputField value="{!RateProtectionRequest.Origin_City_State_Zip__c}" style="width:305px"/>
+                <apex:inputField value="{!RateProtectionRequest.Destination_City_State_Zip__c}" style="width:305px"/>
+                <apex:inputField value="{!RateProtectionRequest.Was_this_shipment_W_I_d__c}"/>
+                <apex:inputField value="{!RateProtectionRequest.W_I_corrected_amount__c}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <table style="padding-left:50px">
+                            <tr>
+                                <td>Pieces</td>
+                                <td>Weight in Lbs.</td>
+                                <td>Dimension (L" x W" x H")</td>
+                                <td>Freight Description &#39; Actual Class</td>
+                                <td>Stackable</td>
+                            </tr>
+                            <apex:repeat value="{!Freights}" var="item">
+                                <tr>
+                                    <td><apex:inputField value="{!item.Pieces__c}" style="width: 60px;"/></td>
+                                    <td><apex:inputField value="{!item.Weight_in_Lbs__c}"/></td>
+                                    <td><apex:inputField value="{!item.Dimension_L_x_W_x_H__c}"/></td>
+                                    <td><apex:inputField value="{!item.Freight_Description_Actual_Class__c}" style="width: 180px;"/></td>
+                                    <td><apex:inputField value="{!item.Stackable__c}"/></td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:inputTextarea value="{!RateProtectionRequest.Requested_Pricing__c}" rows="6" cols="60"/>
+                <apex:inputTextarea value="{!RateProtectionRequest.Notes_Justification__c}" rows="6" cols="60"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

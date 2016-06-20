@@ -1,0 +1,447 @@
+<apex:page docType="html-5.0" controller="CommissionDashboardCtrl" readOnly="true" standardStylesheets="false" sidebar="false">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.CommissionDasboardResources, '/bootstrap/css/bootstrap.min.css')}"></apex:stylesheet>
+    <apex:includeScript value="{!URLFOR($Resource.CommissionDasboardResources, '/jquery/jquery-2.1.4.min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.CommissionDasboardResources, 'bootstrap/js/bootstrap.min.js')}"></apex:includeScript>
+    <apex:includeScript value="https://www.google.com/jsapi"></apex:includeScript>
+    
+   
+    
+    <script type="text/javascript">
+        google.load('visualization', '1', {'packages':['corechart', 'bar']});
+        google.setOnLoadCallback( chartAPIReady );
+
+        jQuery(document).ready(function($) {
+            if ( dateFilter != 'none' ) {
+                $(document.getElementById('{!$Component.filterForm.dateFilter}')).val( dateFilter );
+            }
+            if ( accountFilter != '' ) {
+                 $(document.getElementById('{!$Component.filterForm.accountFilter}')).val( accountFilter );
+            }
+            if ( accountExecFilter != 'none' ) {
+                 $(document.getElementById('{!$Component.filterForm.accountExecFilter}')).val( accountExecFilter );
+            }
+        });
+    
+        var dateParameter = '{!$CurrentPage.parameters.date}';
+        var accountParameter = '{!$CurrentPage.parameters.account}';
+        var accountExecParameter = '{!$CurrentPage.parameters.accountExec}';
+        
+        // global filter variables
+        var dateFilter = 'none';
+        var accountFilter = '';
+        var accountExecFilter = 'none';
+        
+        // global chart variables
+        var chartView;
+        var chart;
+        var options;
+        var dashboardSettings;
+        
+        // if filters passed in url then update filters
+        if ( dateParameter ) dateFilter = dateParameter;
+        if ( accountParameter ) accountFilter = accountParameter;
+        if ( accountExecParameter ) accountExecFilter = accountExecParameter;
+        
+
+        function chartAPIReady( ) {
+            retrieveChartData();
+        }
+        
+        
+        
+        function getDashboardSettings(callback ){
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.CommissionDashboardCtrl.getDashboardSettings}', 
+                function( result, event) {
+                    dashboardSettings = result;
+                });
+        }
+        
+        getDashboardSettings();
+        
+        
+        
+         function drilldownAllCommissions() {
+            var url = '/' + dashboardSettings.AllCommissionsDrilldownReportId;
+            var params = '';
+            var drilldownSettings = dashboardSettings['CommissionDashboardDrilldownSettings'];
+            var paramNum = 0;
+            
+            
+            if ( accountExecFilter != 'none' ) {
+                var accountExecFieldId = drilldownSettings['Account Executive'].Field_Id__c;
+                if (params.length == 0) {
+                    params += '?';
+                }
+                params += 'pc' + paramNum + '=' + accountExecFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + accountExecFilter;
+                paramNum++;
+            }
+            if ( dateFilter != 'none' ) {
+                if (params.length == 0) {
+                    params += '?';
+                } else  {
+                    params += '&';
+                }
+                var dateFieldId = drilldownSettings['Report Date'].Field_Id__c;
+                params += 'pc' + paramNum + '=' + dateFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + dateFilter;
+                paramNum++;
+            }
+            if ( accountFilter != '' ) {
+                 if (params.length == 0) {
+                    params += '?';
+                } else  {
+                    params += '&';
+                }
+                var accountFieldId = drilldownSettings['Account'].Field_Id__c;
+                params += 'pc' + paramNum + '=' + accountFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + accountFilter;
+            }
+            
+            url += params;
+            window.open( url,  '_blank');
+        }
+
+ 
+        
+        function drilldownMissedCommissions() {
+            var url = '/' + dashboardSettings.MissedCommissionDrilldownReportId;
+            var params = '';
+            var drilldownSettings = dashboardSettings['CommissionDashboardDrilldownSettings'];
+            var paramNum = 3; // start at 3 because 1 and 2 are already defined in the report
+            var boolFilter = '(1 or  2)';
+            var didAddFilter = false;
+
+            if ( accountExecFilter != 'none' ) {
+                var accountExecFieldId = drilldownSettings['Account Executive'].Field_Id__c;
+                if (params.length == 0) {
+                    params += '?';
+                }
+                params += 'pc' + paramNum + '=' + accountExecFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + accountExecFilter;
+                boolFilter += ' AND ' + paramNum;
+                didAddFilter = true;
+                paramNum++;
+            }
+            if ( dateFilter != 'none' ) {
+                if (params.length == 0) {
+                    params += '?';
+                } else  {
+                    params += '&';
+                }
+                var dateFieldId = drilldownSettings['Report Date'].Field_Id__c;
+                params += 'pc' + paramNum + '=' + dateFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + dateFilter;
+                boolFilter += ' AND ' + paramNum;
+                didAddFilter = true;
+                paramNum++;
+            }
+            if ( accountFilter != '' ) {
+                 if (params.length == 0) {
+                    params += '?';
+                } else  {
+                    params += '&';
+                }
+                var accountFieldId = drilldownSettings['Account'].Field_Id__c;
+                params += 'pc' + paramNum + '=' + accountFieldId + '&pn' + paramNum + '=eq&pv' + paramNum + '=' + accountFilter;
+                boolFilter += ' AND ' + paramNum;
+                didAddFilter = true;
+            }
+            if ( didAddFilter ) {
+                params += '&bool_filter=' + encodeURIComponent( boolFilter );
+            }
+            url += params;
+            window.open( url,  '_blank');
+        }
+        
+        
+        function retrieveChartData(callback ){
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.CommissionDashboardCtrl.commissionReportData}', 
+                dateFilter,
+                accountFilter,
+                accountExecFilter,
+                function( reportInstanceId, event) {
+                    isReportDataReady(reportInstanceId);
+                });
+        }
+        
+        
+        function isReportDataReady(reportInstanceId) {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.CommissionDashboardCtrl.isReportDataReady}',
+                reportInstanceId,
+                function (result, event) {
+                    if (event.status) {
+                        if ( result[0] == 'Running' || result[0] == 'New') {
+                            isReportDataReady( reportInstanceId ); // restart the poll     
+                        } else {
+                            drawChart( result[1]);
+                        }
+                       
+                    }
+                }, {escape: false, timeout: 30000, buffer: false});
+        }
+        
+        function drawChart( result ) {
+             var data = new google.visualization.DataTable();
+                    if ( result.length > 0 ) {
+                        data.addColumn('string', 'Report Date');
+                        data.addColumn('number', 'Draw');
+                        data.addColumn('number', 'Growth');
+                        data.addColumn('number', 'Commission Amount');
+                        data.addColumn('number', 'Missed Commission');
+                        data.addRows( result );
+                        
+                        // format currency in tooltips.  Must be called after loading data rows
+                        var formatter = new google.visualization.NumberFormat({negativeColor: 'red', negativeParens: true, prefix: '$',pattern: '###,###'});
+                        formatter.format(data, 1);
+                        formatter.format(data, 2);
+                        formatter.format(data, 3);
+                        formatter.format(data, 4);
+
+                        options = {
+                            title: '',
+                            isStacked: true,
+                            height: 500,
+                            allowHtml: true,
+                            vAxis: { format: 'currency'},
+                            toolTip: {isHtml: true},
+                            colors: ['blue', 'darkorange', 'green', 'darkred']
+                        };
+                        $("#noChartData").hide();
+                        $('#loadingChartDataPanel').fadeOut(); 
+                        $("#commissionChart").show();
+                        
+                        chartView = new google.visualization.DataView(data);
+                        chart = new google.visualization.ColumnChart(document.getElementById('commissionChart'));
+                        
+                        chart.draw(chartView, options);
+                        
+                        //var chart = new google.visualization.ColumnChart(document.getElementById('commissionChart'));
+                        //chart.draw(data, options );
+                        
+                        $("#refreshingChartDataPanel").fadeOut();
+                        
+                        // enable drilldown buttons
+                        //$('#missedCommissions').parent().removeClass('disabled');
+                        //$('#allCommissions').parent().removeClass('disabled');
+                        
+                    } else {
+                        // NO CHART DATA
+                        $("#refreshingChartDataPanel").fadeOut();
+                        $("#loadingChartDataPanel").fadeOut();
+
+
+                        $("#commissionChart").hide();
+                        $("#noChartData").show();
+                        
+                        // disable drilldown buttons
+                        //$('#missedCommissions').parent().addClass('disabled');
+                        //$('#allCommissions').parent().addClass('disabled');
+                    }
+                    
+        };
+        
+      
+        
+        function refreshChart() {
+            var docHeight = $(document).height();
+            var statusElement = $("#refreshingChartDataPanel");
+            statusElement.height(docHeight).fadeIn();
+            retrieveChartData();
+        }
+
+        function applyFilter() {
+             dateFilter = document.getElementById('{!$Component.filterForm.dateFilter}').value;
+             accountFilter = document.getElementById('{!$Component.filterForm.accountFilter}').value;
+             accountExecFilter = document.getElementById('{!$Component.filterForm.accountExecFilter}').value;
+
+            
+            // reset selected drilldown buttons             
+             //$('#missedCommissions').removeAttr('checked').parent().removeClass('active');
+             //$('#allCommissions').attr('checked','checked').parent().addClass('active');
+             
+             refreshChart();
+             
+             
+        }
+        
+        function clearFilters() {
+             $(document.getElementById('{!$Component.filterForm.dateFilter}')).val( 'none');
+             $(document.getElementById('{!$Component.filterForm.accountFilter}')).val('');
+             $(document.getElementById('{!$Component.filterForm.accountExecFilter}')).val('none');
+             dateFilter = 'none';
+             accountFilter = '';
+             accountExecFilter = 'none';
+             
+             // reset selected drilldown buttons             
+             //$('#missedCommissions').removeAttr('checked').parent().removeClass('active');
+             //$('#allCommissions').attr('checked','checked').parent().addClass('active');
+             
+             refreshChart();
+        }
+        
+        function drilldownAllCommissionsOld() {
+            options.colors = ['blue', 'darkorange', 'green', 'darkred'];
+            chartView.setColumns([0,1,2,3, 4]);
+            chart.draw(chartView, options);
+        }
+        
+        
+        function drilldownMissedCommissionsOld() {
+            options.colors = ['darkred'];
+            chartView.hideColumns([ 1, 2, 3]);
+            chart.draw(chartView, options);
+        }
+        
+        
+        
+    </script>
+    
+    <style type="text/css">
+        #app {
+            padding: 1.5em;
+        }
+        
+        #refreshingChartDataPanel {
+            position: absolute;
+            background-color: rgba(255,255,255,.7);
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            background-image: url("{!URLFOR($Resource.CommissionDasboardResources, '/loading.gif')}");
+            background-repeat: no-repeat;
+            background-position: center center;
+
+        }
+        
+        .page-title {
+            color: rgba(0,0,0,.8);
+            margin-bottom: 2em;
+        }
+        
+        #loadingChartDataPanel {
+            background-image: url("{!URLFOR($Resource.CommissionDasboardResources, '/loading.gif')}");
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 500px;
+            padding: 10em;
+            border: none;
+            color: grey;
+        }
+        
+        #noChartData {
+            height: 500px;
+            padding: 10em;
+            border: none;
+            color: grey;
+        }
+        
+        .inputMarginBottom {
+            margin-bottom: .6em;
+        }
+        
+        /* styles to make lookup inputs bootstrap styles */
+        .lookupInput a {
+            display: block;
+            position: absolute;
+            top: 0px;
+        }
+        .lookupInput img {
+            float: right;
+        }
+        span.lookupInput {
+            position: relative;
+            display: inherit;
+        }
+        .lookupInput a {
+            boder: none !important;
+            background: none !important;
+        }
+        .bs .btn-info.active {
+            background-color: #337ab7;
+        }
+        
+        
+        .drilldown-links {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+       
+    </style>
+    
+    <div class="bs" id="app">
+        <div class="text-center page-title" style="display:none;">
+            <h2>Commission Dashboard</h2>
+        </div>
+
+        <div class="row">
+            <apex:form id="filterForm"  styleClass="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Account Executive</label>
+                    <div class="col-sm-10 inputMarginBottom">
+                        <apex:selectList id="accountExecFilter" size="1" styleClass="form-control marginBottom" style="width:auto;">
+                            <apex:selectOptions value="{!accountExecOptions}"></apex:selectOptions>
+                        </apex:selectList>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Time Period</label>
+                    <div class="col-sm-10 inputMarginBottom">
+                        <apex:selectList styleClass="form-control" style="width: auto;" id="dateFilter" size="1" >
+                            <apex:selectOption itemValue="none" itemLabel="--None--"></apex:selectOption>
+                            <apex:selectOption itemValue="LAST_MONTH" itemLabel="Last Month"></apex:selectOption>
+                            <apex:selectOption itemValue="THIS_QUARTER" itemLabel="This Quarter"></apex:selectOption>
+                            <apex:selectOption itemValue="LAST_QUARTER" itemLabel="Last Quarter"></apex:selectOption>
+                            <apex:selectOption itemValue="THIS_YEAR" itemLabel="This Year"></apex:selectOption>
+                            <apex:selectOption itemValue="LAST_YEAR" itemLabel="Last Year"></apex:selectOption>
+
+                        </apex:selectList>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Account</label>
+                    <div class="col-sm-10 inputMarginBottom">
+                        <apex:inputField id="accountFilter" styleClass="form-control" style="width:20em;" value="{!accountProxy.parentId}"></apex:inputField>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10"  style="margin-top:1em;">
+                        <apex:commandButton onClick="applyFilter();" value="Apply Filter" reRender="none" styleClass="btn btn-primary"></apex:commandButton>
+                        <apex:commandButton onClick="clearFilters();" value="Clear Filters" reRender="none" styleClass="btn btn-default" style="margin-left:1em;"></apex:commandButton>
+                    </div>
+                </div>
+
+                <!-- if we do not use clearfix then the filter form disappears -->
+                <div class="clearfix"></div>
+            </apex:form>
+        </div>
+        
+        <div class="row">
+            <!-- blue, green, red, oranage -->
+            <div id="commissionChart">
+            </div>
+            
+            <div id="loadingChartDataPanel" class="text-center">
+                <h2>Loading Chart</h2>
+            </div>
+            
+            <div id="refreshingChartDataPanel" style="display:none;">
+            </div>
+            
+            <div id="noChartData" style="display:none" class="text-center">
+                <h2 style="display:block;">No Data Found</h2>
+                <h3>Please change filter criteria.</h3>
+            </div>
+            
+            <div class="text-center drilldown-links"  >
+                <a href="" onClick="drilldownAllCommissions();return false;" >All Commissions</a>
+                <a href="" onClick="drilldownMissedCommissions(); return false;" style="padding-left:2em;">Missed Commissions</a>
+            </div>
+        </div>
+        
+        
+    </div>
+    
+   
+
+    
+</apex:page>

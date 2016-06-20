@@ -1,0 +1,4 @@
+<apex:page >
+ <apex:image url="{!$Resource.wl}" width="243" height="212"/>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

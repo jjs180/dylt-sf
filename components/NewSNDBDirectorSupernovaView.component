@@ -1,0 +1,473 @@
+<apex:component >
+<div id="DirectorSupernovaView" class="row" style="display:none;padding:2em 0em 2em 0em;" >
+           <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+                    <a href="#drQuota" role="tab" data-toggle="tab">Quota</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drLongTermGrowth" role="tab" data-toggle="tab">Long Term Growth</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drShortTermGrowth" role="tab" data-toggle="tab">Short Term Growth</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drNewRevenue" role="tab" data-toggle="tab">New Revenue</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drCloseRatioIO" role="tab" data-toggle="tab">Close Ratio</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drProfiles" role="tab" data-toggle="tab">New Profiles</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drContributionMargin" role="tab" data-toggle="tab">Contribution Margin</a>
+                </li>              
+                <li role="presentation">
+                    <a href="#drArOver60" role="tab" data-toggle="tab">AR Over 60</a>
+                </li>       
+                <li role="presentation">
+                    <a href="#drShipperCount" role="tab" data-toggle="tab">Shipper Count</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drGuaranteed" role="tab" data-toggle="tab">Guaranteed Shipments</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drCompliance" role="tab" data-toggle="tab">Compliance</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drWebPickups" role="tab" data-toggle="tab">Web Pickups</a>
+                </li>
+                <li role="presentation">
+                    <a href="#drRateQuoteIP" role="tab" data-toggle="tab">Rate Quote</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                
+                <div role="tabpanel" class="tab-pane fade in active" id="drArOver60">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Ar_Over_60" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end AR Over 60 -->
+                
+                 <div role="tabpanel" class="tab-pane" id="drCompliance">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Compliance" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Compliance -->
+                
+                <div role="tabpanel" class="tab-pane" id="drLongTermGrowth">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Long_Term_Growth" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Long Term Growth -->
+                
+                <div role="tabpanel" class="tab-pane" id="drCloseRatioIO">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Close_Ratio_IO" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Close Ratio -->
+                
+            
+                <div role="tabpanel" class="tab-pane" id="drGuaranteed">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Guaranteed" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Guaranteed Shipments -->
+                
+                <div role="tabpanel" class="tab-pane" id="drShortTermGrowth">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Short_Term" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Short Term Growth -->
+                
+                <div role="tabpanel" class="tab-pane" id="drNewRevenue">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_New_Revenue" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end New Revenue -->
+                
+                <div role="tabpanel" class="tab-pane" id="drRateQuoteIP">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Rate_Quote_IP" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Rate Quote -->
+                
+                <div role="tabpanel" class="tab-pane" id="drContributionMargin">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Contribution_Margin" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Contribution Margin -->
+                
+                <div role="tabpanel" class="tab-pane" id="drWebPickups">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Pick_Ups" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Web Pickups -->
+                
+                <div role="tabpanel" class="tab-pane" id="drProfiles">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Profiles" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end New Profiles -->
+                
+                <div role="tabpanel" class="tab-pane" id="drQuota">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Quota" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Quota -->
+                
+                <div role="tabpanel" class="tab-pane" id="drShipperCount">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div id="DR_Shipper_Count" class="loadingChart"></div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- end Shipper Count -->
+                
+            
+            </div>
+            <!-- end All Tabs ( tab-content) -->
+            
+        </div>
+        
+<script type="text/javascript">
+    
+   
+var directorSupernovaReports = new Array(
+   {
+        name : 'Ar_Over_60', 
+        renderTo: 'DR_Ar_Over_60',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 4,
+        sortColumnName: 'Supernova__c.Collect_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA1', label: 'AR % over 60', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Collect_Score__c', label: 'Score', type: 'number', styleClass: 'bold-text', isVisible: true, order: 4},
+                    {name: 'FORMULA2', label: 'Collection Score', type: 'number', isVisible: false, order: 5},
+                    {name: 'Supernova__c.AR_Over_60_Perc__c', label: 'percent', type: 'number', isVisible: false, order: 6}
+                    
+                ]
+   },
+   {
+        name : 'Compliance', 
+        renderTo: 'DR_Compliance',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.CY_Compliance__c', label: 'Compliance', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.CY_Compliance__c', label: 'Compliance Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Compliance_Score__c', label: 'Score ', type: 'number', isVisible: true, styleClass: 'bold-text', order: 3},
+                    {name: 'FORMULA1', label: '(not used) Compliance Score', type: 'number', isVisible: false, order: 4}
+                ]
+   },
+   {
+        name : 'Long_Term', 
+        renderTo: 'DR_Long_Term_Growth',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.Long_Term_Growth__c', label: 'Long Term Growth', type: 'number', isVisible: false, order: 2},
+                    //{name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Long_Term_Growth__c', label: 'LT Growth', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'LT Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Long_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text',  order: 4},
+                    {name: 'FORMULA2', label: 'Long Term Score', type: 'number', isVisible: false, order: 5}
+
+                ]
+   },
+   {
+        name : 'Close_Ratio_IO', 
+        renderTo: 'DR_Close_Ratio_IO',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        //54602
+        //sortColumnNumber: 4,
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.CR_Ratio_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CR_Close_Ratio__c', label: 'Close Ratio', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'Close Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.CR_Ratio_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                ]
+   },
+   {
+        name : 'Guaranteed', 
+        renderTo: 'DR_Guaranteed',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.CY_Guaranteed__c', label: 'Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.CY_Guaranteed__c', label: 'Guaranteed Shipments', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Guaranteed_Score__c', label: 'Score', type: 'number', isVisible: false, order: 3},
+                    {name: 'FORMULA1', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+                ]
+   },
+   {
+        name : 'Short_Term', 
+        renderTo: 'DR_Short_Term',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    //54602
+                    //{name: 'Supernova__c.Short_Term_Growth__c', label: 'Growth', type: 'number', isVisible: false, order: 2},
+                    //{name: 'FORMULA1', label: 'Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Short_Term_Growth__c', label: 'ST Growth', type: 'number', isVisible: false, order: 2},
+                    {name: 'FORMULA1', label: 'ST Growth', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Short_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: false, order: 5}
+
+                ]
+   },
+   {
+        name : 'New_Revenue', 
+        renderTo: 'DR_New_Revenue',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'Supernova__c.CR_Revenue_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CR_New_Revenue_PD__c', label: 'New Revenue', type: 'currency', isVisible: true, order: 2},
+                    {name: 'FORMULA1', label: 'Revenue', type: 'number', isVisible: false, order: 3},
+                    {name: 'Supernova__c.CR_Revenue_Score__c', label: 'New Revenue Score', type: 'number', isVisible: true, styleClass: 'bold-text',order: 4},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: false, order: 5}
+                ]
+   },
+   {
+        name : 'Rate_Quote_IP', 
+        renderTo: 'DR_Rate_Quote_IP',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.Web_Quotes_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.Web_Quotes_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA1', label: 'Web Quote %', type: 'percent', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Web_Quotes_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                ]
+   },
+   { 
+        name : 'CM_New_Supernova', 
+        renderTo: 'DR_Contribution_Margin',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'Supernova__c.TCG_Contribution_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                            {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.TCG_Contribution_Perc__c', label: 'Ratio', type: 'percent', isVisible: false, order: 2},
+                            {name: 'FORMULA2', label: 'Ratio', type: 'percent', isVisible: true, order: 3},                          
+                            {name: 'Supernova__c.TCG_Contribution_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                            {name: 'Supernova__c.CR_Revenue_Score__c', label: 'Revenue Score', type: 'number', isVisible: false, order: 5}
+                        ]
+   },
+   {
+        name : 'Pick_Ups', 
+        renderTo: 'DR_Pick_Ups',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.Web_Pickups_Ratio__c', label: 'Ratio', type: 'number', isVisible: false, order: 2},
+                    {name: 'Supernova__c.Web_Pickups_Score__c', label: 'Score', type: 'number', isVisible: false, order: 3},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Ratio', type: 'percent', isVisible: true, order: 4},
+                    {name: 'FORMULA1', label: 'Web Pickup %', type: 'percent', isVisible: true, order: 4},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 5}
+
+                ]
+   },
+   {
+        name : 'Profiles', 
+        renderTo: 'DR_Profiles',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CR_New_Profiles__c', label: 'New Profles', type: 'number', isVisible: true, order: 2},
+                    {name: 'Supernova__c.Profiles_Score__c', label: 'Score', type: 'number', isVisible: true,styleClass: 'bold-text', order: 3},
+                    {name: 'FORMULA1', label: 'Profile Score', type: 'number', isVisible: false,  order: 4}
+                ]
+   },
+   {
+        name : 'Quota', 
+        renderTo: 'DR_Quota',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 2,
+        sortColumnName: 'FORMULA1',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.CY_Quota_Attain__c', label: 'New Profles', type: 'number', isVisible: false, order: 2},
+                    //54602
+                    //{name: 'FORMULA1', label: 'Percent', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA1', label: 'Quota %', type: 'percent', isVisible: true, order: 3},
+                    {name: 'FORMULA2', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4}
+
+                ]
+   },
+   {
+        name : 'Shipper_Count', 
+        renderTo: 'DR_Shipper_Count',
+        instanceId: null,
+        rowLimit: 0,
+        sortOrder: 'desc',
+        sortColumnNumber: 3,
+        sortColumnName: 'Supernova__c.Shipper_Score__c',
+        visualizationType: 'table',
+        displayUserPhoto: true,
+        groupColumns: true,
+        numberOfGroupColumns: 3,
+        showTableHeading: true,
+        columns: [
+                    {name: 'rowLabel', label: '', type: 'string', isVisible: true, order: 1},
+                    {name: 'Supernova__c.PM_Shippers__c', label: 'PM Shippers', type: 'number', isVisible: false, order: 2},
+                    //54602
+                    //{name: 'Supernova__c.CHG_Shippers__c', label: 'Change in Shippers', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.CHG_Shippers__c', label: 'Shipper Count', type: 'number', isVisible: true, order: 3},
+                    {name: 'Supernova__c.Shipper_Score__c', label: 'Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 4},
+                    {name: 'FORMULA1', label: 'Precent', type: 'number', isVisible: false, order: 5}
+                ]
+   });
+           
+</script>    
+           
+</apex:component>

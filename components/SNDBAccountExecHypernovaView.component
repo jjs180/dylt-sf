@@ -1,0 +1,217 @@
+<apex:component >
+<div id="AccountExecutiveHypernovaView" class="row" style="display:none;padding:2em 0em 2em 0em;"> 
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#grid" role="tab" data-toggle="tab">Grid</a>
+        </li> 
+        <li role="presentation">
+            <a href="#topfive" role="tab" data-toggle="tab">Top 5</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="grid">
+            <div class="container-fluid">
+                <div class="row">
+                    <div id="AE_HyperNova_AE_Grid" class="loadingChart"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div role="tabpanel" class="tab-pane" id="topfive">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Revenue and Quota Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Revenue_and_Quota_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Pipeline Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Pipeline_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Shipper Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Shipper_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="clearfix"></div>
+                
+                <div class="row" style="margin-top:2em;">
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Quality Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Quality_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Specialty Service Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Specialty_Services_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Gauge The Web Score</div>
+                            <div class="panel-content">
+                                <div id="AE_Gauge_The_Web_Hypernova" class="loadingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row 2 -->
+                
+            </div>
+        </div>
+        <!-- end all Tabs -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    var accountExecutiveHypernovaReports = new Array(
+            {   name : 'HyperNova_VP_Grid', 
+                renderTo: 'AE_HyperNova_AE_Grid',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 7,
+                sortColumnName: '',
+                visualizationType: 'table',
+                displayUserPhoto: false,
+                //loadingChartClass: 'loadingChart500',
+                showTableHeading: true,
+                columns: [ 
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Quota Score', type: 'number',  isVisible: true, order: 2},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Pipeline Score', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Shipper_Score__c', label: 'Shipper Score', type: 'number', isVisible: true, order: 4},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Quality Score', type: 'number', isVisible: true, order: 5},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Specialty Services Score', type: 'number',  isVisible: true, order: 6},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Gauge The Web Score', type: 'number', isVisible: true, order: 7},
+                            {name: 'Supernova__c.Total_Score__c', label: 'Total Score', type: 'number', isVisible: true, order: 8},
+                            {name: 'RowCount', label: 'Count', isVisible: false, order: 9}
+                        ]
+            }, 
+            {   name : 'Revenue_and_Quota_Hypernova',
+                renderTo: 'AE_Revenue_and_Quota_Hypernova',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Revenue_Quota_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Revenue & Quota Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+
+                        ]
+            },
+            {   name : 'Quality_Hypernova',
+                renderTo: 'AE_Quality_Hypernova',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Quality_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Quality Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+                        ]
+            },
+            {   name : 'Pipeline_Hypernova', 
+                renderTo: 'AE_Pipeline_Hypernova', 
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Pipeline_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Pipeline Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+
+
+                        ]
+            },
+            {   name : 'Specialty_Services_Hypernova',
+                renderTo: 'AE_Specialty_Services_Hypernova',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Specialty_Services_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Specialty Services Score', type: 'number', isVisible: true, styleClass: 'bold-text', order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+
+                        ]
+            },
+            {   name : 'Shipper_Hypernova',
+                renderTo: 'AE_Shipper_Hypernova',
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Shipper_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Shipper_Score__c', label: 'Shipper Score', type: 'number', isVisible: true, styleClass: 'bold-text',  order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number', isVisible: false, order: 3}
+
+                        ]
+            },
+            {   name : 'Gauge_The_Web_Hypernova', 
+                renderTo: 'AE_Gauge_The_Web_Hypernova', 
+                instanceId: null,
+                rowLimit: 5,
+                sortOrder: 'desc',
+                sortColumnNumber: 1,
+                sortColumnName: 'Supernova__c.Gauge_The_Web_Score__c',
+                visualizationType: 'table',
+                displayUserPhoto: true,
+                showTableHeading: false,
+                columns: [
+                            {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Gauge The Web Score', type: 'number', isVisible: true, styleClass: 'bold-text',  order: 2},
+                            {name: 'RowCount', label: 'Count', type: 'number',  isVisible: false, order: 3}
+                        ]
+            });
+    
+    
+</script>
+
+
+</apex:component>

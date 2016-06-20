@@ -1,0 +1,657 @@
+<apex:page cache="false" sidebar="false" showHeader="false" controller="CustomerDashboardCtrl2"    standardStylesheets="false">
+<!-- contentType="application/vnd.ms-powerpoint/#test.ppt" -->
+<mhtml lang="en">
+      <head>
+            <meta charset="utf-8"/>
+            <title>Daylight Shipping Presentation</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <meta name="author" content="Mark Miller"/>
+
+            <!-- Bootstrap -->
+            <apex:stylesheet value="{!URLFOR($Resource.presentation, 'css/bootstrap.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, '/jquery/jquery-2.1.4.min.js')}"></apex:includeScript>
+            <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'underscore-min.js')}"></apex:includeScript>
+            <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'handlebars-v4.0.5.js')}"></apex:includeScript>
+            <apex:includeScript value="{!URLFOR($Resource.CustomerDashboardResources, 'numeral.js')}"></apex:includeScript>
+            <apex:includeScript value="https://www.google.com/jsapi"></apex:includeScript>
+            
+            
+    <script id="tableWithGroupedColumnsTemplate" type="text/x-handlebars-template">
+        <table class="table table-striped">
+            <thead>
+                 {{#if showTableHeading}}
+                    <tr>
+                        {{#each tableHeadings}}
+                            
+                            {{#if isVisible}}
+                                <th {{#setTextAlign type}} {{/setTextAlign}} {{#ifEquals type 'spacer'}} class="spacer-column" {{/ifEquals}}>
+                                    {{label}}
+                                </th>
+                            {{/if}}
+                        {{/each}}
+                    </tr>
+                {{/if}}
+            </thead>
+            <tbody>
+                {{#each rows}}
+                <tr>
+                    {{#each columnGroup}}
+                        {{#each columns}}
+                            {{#if isVisible}}
+                                {{#ifEquals type 'photo'}}
+                                     <td class="photoColumn">
+                                        <img src="{{value}}"  width="45px" height="45px"></img>
+                                    </td>
+                                {{else}}
+                                    <td {{#setTextAlign type}} {{/setTextAlign}} >
+                                        <span class="{{styleClass}}">
+                                            {{formatValue value type}}
+                                        </span>
+
+                                    </td>
+                                {{/ifEquals}}
+                            {{/if}}
+                        {{/each}}
+                             
+                        <!-- add a spacer column -->
+                        <td style="background-color: white; width:45px;"></td> 
+                        
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+    <style>
+        *{
+            font-family: "Slate Pro Medium";
+        }
+           #auraErrorMessage{
+            display:none;
+        }
+        .chartSectionTitle{                 
+            color: #003087;
+            text-align: center;
+            font-size: 50px;
+            font-weight: bold;
+            text-transform: uppercase;      
+            text-shadow: rgb(3, 3, 3) -1px -1px 0px;      
+         }
+        .glyphicon{
+            color:#003087;
+            font-size: 42px;
+            padding-top:13px;
+            cursor: pointer;
+            opacity: .8;            
+            text-shadow: rgb(3, 3, 3) -1px -1px 0px;
+        } 
+        .google-visualization-table-tr-head { 
+            background: linear-gradient(to bottom, #00449C 0%, #00449C 50%, #000000 50%, #003087 50%, #003087 100%);
+                background-color: #003087 !important;   
+                font-size: 15px;
+                font-family: "Slate Pro Medium";
+                text-transform: uppercase;
+                color: #FFFFFF;
+                height: 42px;
+                border-radius: 5px;
+                box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.5);
+               /* padding-left: 20px;
+                padding-right: 20px;
+                border: none;*/
+                transition: all 0.3s; 
+        }
+        
+        button{
+            background: linear-gradient(to bottom, #00449C 0%, #00449C 50%, #000000 50%, #003087 50%, #003087 100%);
+            background-color: #003087;   
+            font-size: 15px;
+            font-family: "Slate Pro Medium";
+            text-transform: uppercase;
+            color: #FFFFFF;
+            height: 42px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.5);
+            padding-left: 20px;
+            padding-right: 20px;
+            border: none;
+            transition: all 0.3s;
+            margin-right: -30px;        
+        }         
+        #auraElement-1, #auraElement-2, #auraElement-3, #auraElement-4, #auraElement-5, #auraElement-6, #auraElement-7, #auraElement-8, #auraElement-9,#auraElement-10, #auraElement-11, #auraElement-12, #auraElement-13, #auraElement-14, #auraElement-15, #auraElement-16, #auraElement-17, #auraElement-18, #auraElement-19, #auraElement-20, #auraElement-21, #auraElement-22, #auraElement-23, #auraElement-24, #auraElement-25{
+          /*  margin-left:31%;*/
+            margin-top: 20px;
+        }
+        
+        .analyticsEmbeddedReportChart.width_large {
+            margin-left: 33%;
+        }
+        #top5Consignees, #top5ConsigneesLost,#Top5Shippers,#Top5ShippersLostLT, #Top5ShippersST{
+            margin-top:160px;
+            line-height: 3.428571;
+            width: 50%;
+            margin-left: 25%;
+        }
+        #businessbyLaneShipper_div,#businessbyLaneShipperTable_div, #businessbyLaneConsignee_div, #businessbyLaneConsigneeTable_div, #Top5ShippersLostLT, #Top5ShippersLostST, #Top5Shippers{
+            width:50% ;
+            margin-left:25%;
+        }
+        td{
+            text-align:left;
+            width:40%;
+        }
+        td:first-of-type{
+            text-align:center;
+            width:20%;
+        }
+        td:last-of-type{
+            text-align: center;
+        }
+        th{
+            text-align:center;
+        }
+        #slider1_container{
+            height: 100%;
+        }
+        #table_divTop5ConsigneesLost, #table_divTop5Consignees,#Top5Shippers,#Top5ShippersLostLongTerm_div, #Top5ShippersLostST,#Top5ShippersLostLT, #businessbyLaneConsigneeTable_div, #businessbyLaneConsignee_div, #table_div, #businessbyLaneShipper_div, #businessbyLaneShipperTable_div{
+            margin-top: 20px;
+            text-align:center;
+        }
+        .chartflow{
+            width:auto;
+            min-height: 100vh;
+            margin: 150px 0 100px 0;
+        }
+        .chartgroup{
+            width:auto;
+            margin: 10% 10%
+        }
+      .analyticsEmbeddedReportChart .asOfDateContainer {
+            text-align:center;
+      }
+      section {
+            pointer-events:none;
+          /*height: auto !important;*/
+          position: relative;
+          float: left;
+          width: 100%;
+          padding-left: 15px;
+          padding-right: 15px;
+          padding: 0;
+          min-height: 100%;
+      }
+      navbar-default{
+            border-color:white;
+      }
+      navbar{
+        background-image: url({!URLFOR($Resource.presentation, '/img/header.png')});
+      }     
+        
+        @page {
+            size: letter landscape; /* A4 landscape (297mm×210mm)  8.5 x 11*/
+        }               
+       .chartHeader{
+            display:none;
+        }
+      @media print { 
+       .chartSectionTitle{                  
+            width: 279.4mm;
+            /*margin: 10mm;*/
+            text-align:center;
+            border: 1px solid black;
+            color:  rgb(0, 148, 135);
+            color: blue;
+            text-align: center;
+            font-size: 35pt;
+            font-weight: bold;
+            text-transform: uppercase;                      
+            border: 0px solid black;
+            margin-left: auto;
+            margin-right: auto;     
+        }
+        .chartHeader{
+            display:block;
+            margin-top: -15px;
+        }
+        #auraElement-1, #auraElement-2, #auraElement-3, #auraElement-4, #auraElement-5, #auraElement-6, #auraElement-7, #auraElement-8, #auraElement-9,#auraElement-10, #auraElement-11, #auraElement-12, #auraElement-13, #auraElement-14, #auraElement-15, #auraElement-16, #auraElement-17, #auraElement-18, #auraElement-19, #auraElement-20, #auraElement-21, #auraElement-22, #auraElement-23, #auraElement-24, #auraElement-25{
+            margin-top: 105px;
+        }
+        section{
+            /*height: 8.5in;
+            width: 11in;*/
+            height:auto;
+            /*height: 215.9mm;*/
+            width: auto;
+            page-break-after: always;           
+            border: 0px solid red;
+             /*height: auto !important;*/
+              position: relative;
+              float: none;
+              /*width: 100%;
+              padding-left: 0px;
+              padding-right: 15px;*/
+              padding: 0;
+              /*min-height: 100%;*/
+        }
+        .section{
+            margin:auto;
+            margin-top: 10mm;
+            /*margin-top: 30mm;*/
+        }
+        .chartflow{
+            margin: auto;
+           
+            margin-left: 0px;
+            float:left;
+            padding: auto;
+            width:70%;
+         }
+         .chartSectionTitle{
+            font-size: 28pt;
+            font-family: "Arial Regular";
+            text-align: left;
+            margin-left: 50px;
+            margin-top: 40px;
+         }         
+        .analyticsEmbeddedReportChart.width_large {
+            margin: auto;
+            width: 500px;
+        }
+        #businessbyLaneShipper_div, #businessbyLaneConsignee_div, #businessbyLaneConsigneeTable_div{
+            width:auto;
+            margin:auto;
+            margin-left: 50px;
+           /* margin-right: 50mm;*/
+        }
+        #top5Consignees, #top5ConsigneesLost, #top5Shippers, #top5ShippersLostST, #top5ShippersLostLT{
+            margin-top:auto;
+            line-height: 3.428571;
+            margin-left: 50px;
+        }
+         .outerbound{
+            border-width: 0px;
+         }
+         .container .chart
+                {
+                    width:360px;
+                    height:360px;
+                    float:left;
+                    margin-right:10px;
+                    margin-top:10px;
+                }
+        
+      }
+      @media screen and (min-width:768px){
+        .navbar-brand-centered {
+              position: absolute;
+              left: 50%;
+              display: block;
+              width: 160px;
+              text-align: center;
+              background-color: white;
+          }
+          .navbar>.container .navbar-brand-centered, 
+          .navbar>.container-fluid .navbar-brand-centered {
+              margin-left: -80px;
+          }
+      }    
+      </style>
+      </head>
+      <body>                                         
+            <nav class="navbar navbar-default navbar-fixed-top" style="background-color:white;border-color:white;" role="navigation">
+                <div class="container" style="background-color:white;border-color:white;background-image: url({!URLFOR($Resource.presentation, '/img/header2.png')}); background-repeat:no-repeat;">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                  <!-- div class="navbar-brand navbar-brand-centered" style="padding: 0px;"><apex:image id="logo" value="{!$Resource.dylt_logo}" height="60" style="padding-top:5px;"/></div-->
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-brand-centered">
+                  <ul class="nav navbar-nav">
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">              
+                    <li style="padding-top:13px; padding-bottom: 13px;">
+                        <button onclick="javascript:window.print()" class="button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                            <span class="ui-button-text">Create PDF</span>
+                        </button>
+                    </li> 
+                  </ul>
+                </div><!-- /.navbar-collapse -->
+              </div><!-- /.container-fluid -->
+            </nav>
+            
+            
+            
+            
+            <!-- apex:outputPanel styleclass="chartGroup">
+            <table width="400px" border="0">
+                <tr>
+                    <td style="text-align:right"><b>Appointed Delivery Start&nbsp;</b><apex:selectList value="{!DateFilterOption}" size="1">
+                        <apex:selectOptions value="{!DateOptions}"></apex:selectOptions>
+                    </apex:selectList><br/><br/>
+                    <b>Account&nbsp;</b><apex:inputField value="{!filterContact.AccountId}"/><br/><br/>
+                    <b>Territory&nbsp;</b><apex:selectList value="{!TerritoryUser}" size="1">
+                        <apex:selectOptions value="{!UserOptions}"></apex:selectOptions>
+                    </apex:selectList><br/>
+                    </td>
+                    <td style="text-align:center;vertical-align:middle">
+                        <apex:commandbutton value="Filter Reports" action="{!setNewReportFilters}"/>
+                    </td>                                
+                </tr>
+            </table>
+        </apex:outputPanel-->                          
+        <div styleclass="chartGroup" id="chartContainer"> 
+            
+            <section data-bind="visible: ARMoneyOwedByAgingCategory, css:{section: ARMoneyOwedByAgingCategory(), current: ARMoneyOwedByAgingCategoryIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>              
+                <div class="chartflow" id="ARMoneyOwedByAgingCategory" >                    
+                    <div class="chartSectionTitle">A/R- Money Owed by Aging Category</div>
+                    <analytics:reportChart reportId="00Oj0000004BStN" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>
+            </section>
+           
+            
+            <section data-bind="visible: accBillCounts, css:{section: accBillCounts(), current: accBillCountsIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="accessorialBillCounts" >
+                    <div class="chartSectionTitle">Accessorial By Bill Counts</div>
+                    <analytics:reportChart reportId="00Oj0000004hKVO" hideonerror="false" size="large" filter="{!ReportFilter3}" showRefreshButton="false"></analytics:reportChart>
+                </div>                                                  
+            </section>
+            
+           
+            <section data-bind="visible: accRev, css:{section: accRev(), current: accRevIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="accessorialRevenues" >
+                    <div class="chartSectionTitle">Accessorials by Revenue</div>
+                    <analytics:reportChart reportId="00Oj0000004hKWC" hideonerror="false" size="large" filter="{!ReportFilter3}" showRefreshButton="false"></analytics:reportChart>
+                </div>                                                  
+            </section>
+           
+            <!--
+            <section data-bind="visible: AvgDailyRevenue, css:{section: AvgDailyRevenue(), current: AvgDailyRevenueIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="AvgDailyRevenue" >
+                    <div class="chartSectionTitle">Average Daily Revenue</div>
+                    <analytics:reportChart reportId="00Oj0000004QhTs" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>                      
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: AvgDailyShipments, css:{section: AvgDailyShipments(), current: AvgDailyShipmentsIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="AvgDailyShipments" >
+                    <div class="chartSectionTitle">Average Daily Shipments</div>
+                    <analytics:reportChart reportId="00Oj0000004QhTt" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>                                                                             
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: AvgDailyTonnage, css:{section: AvgDailyTonnage(), current: AvgDailyTonnageIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="AvgDailyTonnage" >
+                    <div class="chartSectionTitle">Average Daily Tonnage</div>
+                    <analytics:reportChart reportId="00Oj0000004QhTu" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>
+            </section>
+            --> 
+            <!--
+            <section data-bind="visible: averageDaysInTransit, css:{section: averageDaysInTransit(), current: averageDaysInTransitIndex() == 0}">                  
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="avergeDaysInTransit" >
+                    <div class="chartSectionTitle">Avg Days in Transit</div> 
+                    <analytics:reportChart reportId="00Oj0000004Mspw" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div> 
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: averageLengthOfLineHaul, css:{section: averageLengthOfLineHaul(), current: averageLengthOfLineHaulIndex() == 0}">            
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="avergeLengthOfLineHaul" >
+                    <div class="chartSectionTitle">Avg Length of Line Haul</div>
+                    <analytics:reportChart reportId="00Oj0000004BdWS" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>  
+                </div>            
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: businessByLaneConsignee, css:{section: businessByLaneConsignee(), current: businessByLaneConsigneeIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="businessByLaneConsignee" >
+                    <div class="chartSectionTitle">Business by Lane-Consignee</div>
+                    <c:BusinessbyLaneConsignee reportFilters="{!ReportFilter}" />
+                </div>
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: businessByLaneConsigneeTable, css:{section: businessByLaneConsigneeTable(), current: businessByLaneConsigneeTableIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="businessByLaneConsigneeTable" >
+                    <div class="chartSectionTitle">Business by Lane-Consignee Table</div>
+                    <c:BusinessbyLaneConsigneeTable reportFilters="{!ReportFilter}" />
+                </div>
+            </section>
+            --> 
+            <!--
+            <section data-bind="visible: businessByLaneShipper, css:{section: businessByLaneShipper(), current: businessByLaneShipperIndex() == 0}">            
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="businessByLaneShipper" >
+                    <div class="chartSectionTitle">Business by Lane-Shippers</div>
+                    <c:BusinessbyLaneShipper reportFilters="{!ReportFilter}"/>
+                </div>            
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: businessByLaneShipperTable, css:{section: businessByLaneShipperTable(), current: businessByLaneShipperTableIndex() == 0}">            
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="businessByLaneShipperTable" >
+                    <div class="chartSectionTitle">Business by Lane-Shipper Table</div>
+                    <c:BusinessbyLaneShipperTable reportFilters="{!ReportFilter}"/>
+                </div>            
+            </section>
+            -->   
+            <!-- 
+            <section data-bind="visible: claimsRatioByRevenuePaid, css:{section: claimsRatioByRevenuePaid(), current: claimsRatioByRevenuePaidIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="claimsRatioByRevenuePaid" >
+                    <div class="chartSectionTitle">Claims Ratio-By Revenue-Paid</div>
+                    <analytics:reportChart reportId="00Oj0000004Msp3" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div>
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: claimsRatioByShipmentFiled, css:{section: claimsRatioByShipmentFiled(), current: claimsRatioByShipmentFiledIndex() == 0}">           
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="claimsRatioByShipmentFiled">
+                    <div class="chartSectionTitle">Claims Ratio-By Shipment-Filed</div>
+                    <analytics:reportChart reportId="00Oj0000004Msoy" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: claimsRatioByShipmentPaid, css:{section: claimsRatioByShipmentPaid(), current: claimsRatioByShipmentPaidIndex() == 0}">           
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="claimsRatioByShipmentPaid">
+                    <div class="chartSectionTitle">Claims Ratio-By Shipment-Paid</div>
+                    <analytics:reportChart reportId="00Oj0000004Msoo" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: claimsRatioDaysToFile, css:{section: claimsRatioDaysToFile(), current: claimsRatioDaysToFileIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="claimsRatioDaysToFile" >
+                    <div class="chartSectionTitle">Claims Ratio-Days to File</div>
+                    <analytics:reportChart reportId="00Oj0000004BdVU" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div> 
+            </section>
+            --> 
+            <!--
+            <section data-bind="visible: claimsRatioDaysToResolve, css:{section: claimsRatioDaysToResolve(), current: claimsRatioDaysToResolveIndex() == 0}">           
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="claimsRatioDaysToResolve" >
+                    <div class="chartSectionTitle">Claims Ratio-Days to Resolve</div>
+                    <analytics:reportChart reportId="00Oj0000004BdVZ" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div>            
+            </section>
+            -->
+            
+            <section data-bind="visible: contributionRatio, css:{section: contributionRatio(), current: contributionRatioIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="contributionRatioLine" >
+                    <div class="chartSectionTitle">Contribution Margin Ratio</div>                 
+                    <analytics:reportChart reportId="00Oj0000004MsvB" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>
+            </section>
+            
+            <!--
+            <section data-bind="visible: contributionMarginScatter, css:{section: contributionMarginScatter(), current: contributionMarginScatterIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="contributionMarginScatter" >
+                    <div class="chartSectionTitle">Contribution Margin-Scatter</div>
+                    <analytics:reportChart reportId="00Oj0000004C61a" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>            
+           </section>
+           --> 
+           
+            <section data-bind="visible: correctionsClass, css:{section: correctionsClass(), current: correctionsClassIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="correctionsClass" >
+                    <div class="chartSectionTitle">Corrections-Class</div>
+                    <analytics:reportChart reportId="00Oj0000004BffL" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>            
+            </section>
+           
+           
+            <section data-bind="visible: correctionsWeight, css:{section: correctionsWeight(), current: correctionsWeightIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="correctionsWeight" >
+                    <div class="chartSectionTitle">Corrections-Weight</div>
+                    <analytics:reportChart reportId="00Oj0000004Qhjv" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>            
+            </section>
+                     
+             <!--
+            <section data-bind="visible: monthlyRevenue, css:{section: monthlyRevenue(), current: monthlyRevenueIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>                                 
+                <div class="chartflow" >                                                    
+                    <div class="chartSectionTitle">Monthly Revenue</div>                    
+                    <analytics:reportChart reportId="00Oj0000004QhTv" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>                                                
+                </div>
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: monthlyShipments, css:{section: monthlyShipments(), current: monthlyShipmentsIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="monthlyShipments" >
+                    <div class="chartSectionTitle">Monthly Shipments</div>                  
+                    <analytics:reportChart reportId="00Oj0000004QhTw" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div>            
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: monthlyTonnage, css:{section: monthlyTonnage(), current: monthlyTonnageIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="monthlyTonnage" >
+                    <div class="chartSectionTitle">Monthly Tonnage</div>
+                    <analytics:reportChart reportId="00Oj0000004QhTx" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div>                                                                                    
+            </section>
+            -->
+             <!--
+             <section data-bind="visible: shipmentsByOnTimeStatus, css:{section: shipmentsByOnTimeStatus(), current: shipmentsByOnTimeStatusIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="shipmentsByOnTimeStatus" >
+                    <div class="chartSectionTitle">Shipments By On Time Status</div>
+                    <analytics:reportChart reportId="00Oj0000004BTCF" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart> 
+                </div>      
+            </section>
+            -->
+            
+            <section data-bind="visible: specialtyServicesCompliance, css:{section: specialtyServicesCompliance(), current: specialtyServicesComplianceIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="specialtyServicesCompliance" >
+                    <div class="chartSectionTitle">Specialty Services-Compliance</div>
+                    <analytics:reportChart reportId="00Oj0000004BWcu" hideonerror="false" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>
+                </div>                                                  
+            </section>
+            
+            
+             <section data-bind="visible: specialtyServicesGuaranteed, css:{section: specialtyServicesGuaranteed(), current: specialtyServicesGuaranteedIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="specialtyServicesGuaranteed" >
+                    <div class="chartSectionTitle">Specialty Services-Guaranteed</div>
+                    <analytics:reportChart reportId="00Oj0000004BTAd" hideonerror="true" size="large" filter="{!ReportFilter}" showRefreshButton="false"></analytics:reportChart>                   
+                </div>            
+            </section>
+            
+            <!--
+            <section data-bind="visible: top5Consignees, css:{section: top5Consignees(), current: top5ConsigneesIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="top5Consignees" >
+                    <div class="chartSectionTitle">Top 5 Consignees</div>
+                    <c:Top5Consignees reportFilters="{!ReportFilter}"/>
+                </div>           
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: top5Shippers, css:{section: css:{section: top5Shippers(), current: top5ShippersIndex() == 0}">
+            <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>                
+                <div class="chartflow" id="top5Shippers" >
+                    <div class="chartSectionTitle">Top 5 Shippers</div>
+                    <c:Top5Shippers reportFilters="{!ReportFilter}"/>
+                </div> 
+            </section>
+            -->
+            <!--
+            <section data-bind="visible: top5ShippersLostLT, css:{section: css:{section: top5ShippersLostLT(), current: top5ShippersLostLTIndex() == 0}"> 
+            <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>               
+                <div class="chartflow" id="top5ShippersLostLT" >
+                    <div class="chartSectionTitle">Top 5 Shippers Lost Long Term</div>
+                    <c:Top5ShippersLostLongTerm reportFilters="{!ReportFilter}"/>
+                </div> 
+            </section>
+            -->
+            <!--             
+            <section data-bind="visible: top5ShippersLostST, css:{section: css:{section: top5ShippersLostST(), current: top5ShippersLostSTIndex() == 0}">
+            <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>                
+                <div class="chartflow" id="top5ShippersLostST" >
+                    <div class="chartSectionTitle">Top 5 Shippers Lost Short Term</div>
+                    <c:Top5ShippersLostShortTerm reportFilters="{!ReportFilter}"/>
+                </div> 
+            </section>
+            -->     
+            <!-- 
+            <section data-bind="visible: top5ConsigneesLostST, css:{section: top5ConsigneesLostST(), current: top5ConsigneesLostSTIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="top5ConsigneesLostST" >
+                    <div class="chartSectionTitle">Top 5 Consignees Lost Short Term</div>
+                    <c:top5consigneeslostshortterm reportFilters="{!ReportFilter}"/>
+                </div>           
+            </section>
+            -->
+            <!-- 
+            <section data-bind="visible: top5ConsigneesLostLT, css:{section: top5ConsigneesLostLT(), current: top5ConsigneesLostLTIndex() == 0}">
+                <div class="col-md-10 col-md-offset-2 chartHeader" style="padding: 0px;"><apex:image url="{!URLFOR($Resource.presentation, '/img/header2.png')}" /></div>
+                <div class="chartflow" id="top5ConsigneesLostLT" >
+                    <div class="chartSectionTitle">Top 5 Consignees Lost Long Term</div>
+                    <c:Top5ConsigneesLostLongTerm reportFilters="{!ReportFilter}"/>
+                </div>           
+            </section>
+            -->    
+                                                                                                         
+        </div>                                            
+    <apex:includeScript value="{!URLFOR($Resource.presentation, 'js/jquery-2.1.4.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.presentation, 'js/bootstrap.js')}" />    
+    <apex:includeScript value="{!URLFOR($Resource.presentation, 'js/knockout.js')}" />
+   
+    <c:presentationComponent /> 
+    <script>
+        $( document ).ready(function() { //Brute force Removing attributes bound to link behavior
+            $('a.analyticsCordaChart').attr('data-aura-rendered-by','');
+            $('a.analyticsCordaChart').attr('href','#');
+            $('a.analyticsCordaChart').attr('class','');
+            $('div.spacer').attr('class','');
+        });        
+    </script>    
+    </body>
+ </mhtml> 
+
+</apex:page>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>33.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;script&gt;
+                function previousQuarter()
+                    {
+                        if(currentQuarter == 1)
+                        {
+                            currentYear -= 1;
+                            currentQuarter = 4;
+                        }
+                        else
+                        {
+                            currentQuarter -= 1;
+                        }
+                        var quarterInfo = document.getElementById(&quot;quarterInfo&quot;);
+                        quarterInfo.innerHTML = currentYear + &quot;Q&quot; + currentQuarter;
+                        var currentYearServer = document.getElementById(&quot;page:form:currentYear&quot;);
+                        var currentQuarterServer = document.getElementById(&quot;page:form:currentQuarter&quot;);
+                        currentYearServer.value = currentYear;
+                        currentQuarterServer.value = currentQuarter;
+                        refresh();
+                    }
+                    
+                    function nextQuarter()
+                    {
+                        if(currentQuarter == 4)
+                        {
+                            currentYear += 1;
+                            currentQuarter = 1;
+                        }
+                        else
+                        {
+                            currentQuarter += 1;
+                        }
+                        var quarterInfo = document.getElementById(&quot;quarterInfo&quot;);
+                        quarterInfo.innerHTML = currentYear + &quot;Q&quot; + currentQuarter;
+                        var currentYearServer = document.getElementById(&quot;page:form:currentYear&quot;);
+                        var currentQuarterServer = document.getElementById(&quot;page:form:currentQuarter&quot;);
+                        currentYearServer.value = currentYear;
+                        currentQuarterServer.value = currentQuarter;
+                        refresh();
+                    }
+            &lt;/script&gt;</description>
+    <label>Customer View Dashboards</label>
+</ApexPage>

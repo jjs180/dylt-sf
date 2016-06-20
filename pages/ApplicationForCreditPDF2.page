@@ -1,0 +1,297 @@
+<apex:page title="Application For Credit" sidebar="false" renderAs="pdf" applyBodyTag="false" standardController="Credit_Application__c" showHeader="false" standardStylesheets="false">
+    <head>
+        <style type="text/css">
+            @page { size: 11.27in 10.69in; /* A4 width and height */ }
+            body
+            {
+                font-size:13px;
+            }
+            textarea:focus, input:focus
+            {
+                outline: 0;
+                //outline-style: none;
+            }
+            input.outputText
+            {
+                border:0px;
+                min-width:800px;
+                font-size:18px;
+            }
+            div.main
+            {
+                width:960px;
+                margin:10px auto;
+            }
+            div.header
+            {
+                width:100%;
+                height:120px;
+            }
+            div.headerItem1
+            {
+                width:25%;
+                float:left;
+                height:120px;
+            }
+            div.headerItem2
+            {
+                width:50%;
+                float:left;
+                height:120px;
+                text-align:center;
+                font-size:40px;
+                font-weight:bold;
+                line-height:60px;
+            }
+            div.headerItem3
+            {
+                width:25%;
+                float:left;
+                height:120px;
+                text-align:right;
+                font-size:13px;
+                font-weight:bold;
+                line-height:16px;
+            }
+            div.item3Block
+            {
+                width:100%;
+                height:50px;
+            }
+            div.sectionheader
+            {
+                width:100%;
+                margin:15px auto;
+                height:30px;
+                line-height:30px;
+                font-size:24px;
+                font-weight:bold;
+                text-align:center;
+                background-color:rgb(189,189,189);
+                border:2px solid #000;
+            }
+            div.sectionheaderNormal
+            {
+                width:100%;
+                margin-top:10px;
+                margin-bottom:0px;
+                height:20px;
+                line-height:20px;
+                font-size:14px;
+                text-align:center;
+                border:0px;
+            }
+            div.sectionheaderNormal2
+            {
+                width:100%;
+                margin-top:0px;
+                margin-bottom:15px;
+                height:20px;
+                line-height:20px;
+                font-weight:bold;
+                font-size:18px;
+                text-align:center;
+                text-decoration: underline;
+                border:0px;
+            }
+            div.sectionheaderNormal3
+            {
+                width:100%;
+                margin:15px auto;
+                height:30px;
+                line-height:30px;
+                font-weight:bold;
+                font-size:16px;
+                text-align:center;
+                border:0px;
+            }
+            table.infoTable1
+            {
+                width:100%;
+                font-size:20px;
+                border:0px;
+            }
+            td.inputTD
+            {
+                border:0px;
+                border-bottom:2px solid #000;
+            }
+            div.termconditions
+            {
+                width:100%;
+                margin:20px auto;
+                margin-bottom:30px;
+                font-size:14px;
+                line-height:16px;
+                
+            }
+            div.actionblock
+            {
+                width:100%;
+                margin:5px auto;
+                text-align:center;
+            }
+            .btn
+            {
+                color: #FFF;
+                margin: 1px;
+                padding: 2px 3px;
+                border-width: 1px;
+                border-style: solid;
+                border-color: #B5B5B5 #B5B5B5 #7F7F7F;
+                -moz-border-top-colors: none;
+                -moz-border-right-colors: none;
+                -moz-border-bottom-colors: none;
+                -moz-border-left-colors: none;
+                border-image: none;
+                background: green;
+                font-weight: bold;
+                font-size: 16px;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+            div.clr
+            {
+                clear:both;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <div class="header">
+                <div class="headerItem1">
+                    <apex:image url="{!$Resource.daylightlogo}" height="120px" />
+                </div>
+                <div class="headerItem2">Application for Credit</div>
+                <div class="headerItem3">
+                    <div class="item3Block"></div>
+                </div>
+                <div class="clr"></div>
+            </div>
+            <div class="content">
+                <div class="sectionheader">
+                    CUSTOMER INFORMATION  Shipping / Receiving Location:
+                </div>
+                <table class="infoTable1" border="0" cellspaccing="5px" cellpadding="5px">
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Name: &nbsp;<apex:outputText value="{!Credit_Application__c.Name}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Street Address: &nbsp;<apex:outputText value="{!Credit_Application__c.Street_Address__c}" styleClass="outputText"/>
+                        </td>                           
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            City, State Zip: &nbsp;<apex:outputText value="{!Credit_Application__c.City__c}" styleClass="outputText"/>,<apex:outputText value="{!Credit_Application__c.State__c}" styleClass="outputText"/>,<apex:outputText value="{!Credit_Application__c.Zip_Code__c}" styleClass="outputText"/>
+                        </td>                           
+                    </tr>
+                    <tr>
+                        <td class="inputTD" style="width:70%">
+                            Phone Number: &nbsp;<apex:outputText value="{!Credit_Application__c.Phone_Number__c}" styleClass="outputText" style="min-width:500px"/>
+                        </td> 
+                        <td style="width:5%">
+                        Fax:
+                        </td>
+                        <td class="inputTD" style="width:25%">
+                            &nbsp;<apex:outputText value="{!Credit_Application__c.Shipping_Fax__c}" styleClass="outputText" style="min-width:150px"/>
+                        </td>                          
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Contact Name(s): &nbsp;<apex:outputText value="{!Credit_Application__c.Contact_Names__c}" styleClass="outputText"/>
+                        </td>                           
+                    </tr>
+                </table>
+                <div class="sectionheaderNormal">Please attach additional pages as necessary for multiple Shipping / Receiving locations.</div>
+                <div class="sectionheader">
+                    BILLING INFORMATION <i style="text-decoration: underline;">(The following section is important to ensure billing accuracy)</i>
+                </div>
+                <div class="sectionheaderNormal2">
+                    Net 30 - Payment 30 days after invoice date
+                </div>
+                
+                <table class="infoTable1" border="0" cellspaccing="5px" cellpadding="5px">
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Legal Name: &nbsp;<apex:outputText value="{!Credit_Application__c.Legal_Name__c}" styleClass="outputText"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            c/o or DBA: &nbsp;<apex:outputText value="{!Credit_Application__c.c_o_or_DBA__c}" styleClass="outputText"/>
+                        </td>                           
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Mailing Address<br/>
+                            <span style="font-size:14px">(If different then above):&nbsp;</span>
+                            <apex:outputText value="{!Credit_Application__c.Mailing_Address__c}" styleClass="outputText" style="min-width:600px"/>
+                        </td>                           
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Physical Address<br/>
+                            <span style="font-size:14px">(If different then above):&nbsp;</span>
+                            <apex:outputText value="{!Credit_Application__c.Physical_Address__c}" styleClass="outputText" style="min-width:600px"/>
+                        </td>                                                       
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            City, State, Zip: &nbsp;<apex:outputText value="{!Credit_Application__c.Billing_City__c}" styleClass="outputText"/>,<apex:outputText value="{!Credit_Application__c.Billing_State__c}" styleClass="outputText"/>,<apex:outputText value="{!Credit_Application__c.Billing_Zip_Code__c}" styleClass="outputText"/>
+                        </td>                                                       
+                    </tr>
+                    <tr>
+                        <td class="inputTD" style="width:70%">
+                            Phone Number: &nbsp;<apex:outputText value="{!Credit_Application__c.Billing_Phone_Number__c}" styleClass="outputText" style="min-width:500px"/>
+                        </td> 
+                        <td style="width:5%">
+                        Fax:&nbsp;
+                        </td>
+                        <td class="inputTD" style="width:25%">
+                            <apex:outputText value="{!Credit_Application__c.Billing_Fax__c}" styleClass="outputText" style="min-width:150px"/>
+                        </td>                          
+                    </tr>
+                </table>
+                
+                <div class="sectionheaderNormal3">
+                    Daylight&#39;s default invoicing is electronic invoicing <span style="font-size:20px">e-Invoice</span>. Please provide email address to send invoices to
+                </div>
+                <table class="infoTable1" border="0" cellspaccing="5px" cellpadding="5px">
+                    <tr>
+                        <td colspan="3" class="inputTD">
+                            Email Address: &nbsp;<apex:outputText value="{!Credit_Application__c.Email_Address__c}" styleClass="outputText"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="inputTD" style="width:65%">
+                            A/P Contact Name (required):&nbsp;
+                            <apex:outputText value="{!Credit_Application__c.A_P_Contact_Name__c}" styleClass="outputText" style="min-width:250px;width:300px;"/>
+                        </td>
+                        <td class="inputTD" style="width:35%">
+                            Phone (required):&nbsp;
+                            <apex:outputText value="{!Credit_Application__c.Einvoice_Phone__c}" styleClass="outputText" style="min-width:80px;width:100px"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inputTD" style="width:30%">
+                            BOL (yes/no):&nbsp;
+                            <apex:outputText value="{!Credit_Application__c.BOL__c}" styleClass="outputText" style="min-width:80px;width:60px"/>
+                        </td>
+                        <td class="inputTD" style="width:35%">
+                            POD (yes/no):&nbsp;
+                            <apex:outputText value="{!Credit_Application__c.POD__c}" styleClass="outputText" style="min-width:80px;width:100px"/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="termconditions">
+                    <p>
+                    I understand that my approval for credit terms will be primarily determined through Daylight&#39;s review of the timeliness of my previous payments to freight industry vendors and others. DYLT reviews credit information provided by Experian, Cortera and Ansonia Credit Data. If granted credit, I agree to honor <b>Terms of Payment NET 30 (payment 30 days after the invoice date)</b>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</apex:page>

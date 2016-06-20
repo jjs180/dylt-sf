@@ -1,0 +1,4 @@
+<apex:page >
+ <apex:image url="{!$Resource.revquota}" width="284" height="215"/>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

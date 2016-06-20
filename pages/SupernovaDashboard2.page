@@ -1,0 +1,794 @@
+<apex:page controller="SupernovaDashboard2Ctrl" sidebar="false" standardStylesheets="false">
+    <apex:includeScript value="{!URLFOR($Resource.SupernovaDashboardResources, '/jquery/jquery-2.1.4.min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.SupernovaDashboardResources, 'bootstrap/js/bootstrap.min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.SupernovaDashboardResources, 'underscore-min.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.SupernovaDashboardResources, 'handlebars-v4.0.5.js')}"></apex:includeScript>
+    <apex:includeScript value="{!URLFOR($Resource.SupernovaDashboardResources, 'numeral.js')}"></apex:includeScript>
+    <apex:includeScript value="https://www.google.com/jsapi"></apex:includeScript>
+    <apex:stylesheet value="{!URLFOR($Resource.SupernovaDashboardResources, '/bootstrap/css/bootstrap.min.css')}"></apex:stylesheet>
+    
+    
+    <style> 
+    
+        #app {
+            padding: 1em 3em 1em 3em;
+        }
+        
+    
+        /* 
+            bootstrap tabs to not display properly so we have to fix up the css 
+        */
+        
+        /*-- inner divs are floated but outer div is not so the line displays at top of div instead of bottom */
+        .bs .nav-tabs { 
+            height: 100%;
+            overflow: hidden;
+        }
+        /* remove space between tabs */
+        .bs .nav-tabs > li {
+            margin-left: 0px;
+        }
+        .bs .tab-content {
+            padding: 1em 2em 1em 2em; /* every tab page should have padding */
+        }
+        
+      
+        /*
+        .bs .nav-tabs > li.active > a {
+            not working - background-color: lightgrey; 
+        }
+        .bs .nav-tabs > li.active {
+            background-color: lightgrey;
+        }
+        */
+        
+        
+        /* 
+            Customisze bootstrap table
+        */
+        
+        .bs .table > thead > tr > th,
+        .bs .table > tbody > tr > th,
+        .bs .table > tfoot > tr > th,
+        .bs .table > thead > tr > td,
+        .bs .table > tbody > tr > td,
+        .bs .table > tfoot > tr > td {
+            /* no change */
+            border-top: none;
+        }
+        
+        /* applies to all tables on the Top 5 tab */
+        #topfive .table > thead > tr > th,
+        #topfive .table > tbody > tr > th,
+        #topfive .table > tfoot > tr > th,
+        #topfive .table > thead > tr > td,
+        #topfive .table > tbody > tr > td,
+        #topfive .table > tfoot > tr > td {
+            padding: 2px;
+            line-height: 1.42857143;
+            vertical-align: middle;
+            border-top: none;
+            border-bottom: none;
+        }
+        
+        #topfive .photoColumn {
+            width: 50px;
+        }
+        .photoColumn {
+            width: 50px;
+        }
+        .bs .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+        
+        .panel-heading {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .panel-content {
+            padding: .5em 1em .5em 1em;
+        }
+        
+        .bs h2 {
+            color: rgba( 0,0,0,.8);
+        }
+        
+           
+        .marginLeft1 {
+            margin-left: 1em;
+        }
+        
+        .loadingChart {
+            background-image: url("{!URLFOR($Resource.SupernovaDashboardResources, '/loading.gif')}");
+            background-repeat: no-repeat;
+            background-position: center center;
+            padding: 10em;
+            border: none;
+            color: grey;
+        }
+        
+        .noChartData {
+            padding: 5em;
+            border: none;
+            color: grey;
+        }
+        
+        .bold-text {
+            font-weight:bold;
+        }
+        
+        /* remove boder from column header for spacer columns */
+        .bs .table > thead > tr > th.spacer-column {
+            border: none;
+        }
+        
+        
+    </style>
+    
+    <script id="tableTemplate" type="text/x-handlebars-template">
+        <table class="table table-striped">
+            <thead>
+                {{#if showTableHeading}}
+                    <tr>
+                        {{#if displayUserPhoto}}
+                            <th>
+                            </th>
+                        {{/if}}
+                        {{#each columnNames}}
+                            {{#if isVisible}}
+                                <th {{#ifEquals type 'number'}} style="text-align:right;" {{/ifEquals}}  >
+                                    {{label}}
+                                </th>
+                            {{/if}}
+                        {{/each}}
+                    </tr>
+                {{/if}}
+            </thead>
+            <tbody>
+                {{#each rows}}
+                    <tr>
+                        {{#each columns}}
+                            {{#if isVisible}}
+                                {{#ifEquals type 'photo'}}
+                                     <td class="photoColumn">
+                                        <img src="{{value}}"  width="45px" height="45px"></img>
+                                    </td>
+                                {{else}}
+                                    <td {{#ifEquals type 'number'}} style="text-align:right;" {{/ifEquals}}>
+                                        <span class="{{styleClass}}">
+                                         {{formatValue value type}}
+                                        </span>
+                                    </td>
+                                {{/ifEquals}}
+                            {{/if}}
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+   
+    
+    <script id="tableWithGroupedColumnsTemplate" type="text/x-handlebars-template">
+        <table class="table table-striped">
+            <thead>
+                 {{#if showTableHeading}}
+                    <tr>
+                        {{#each tableHeadings}}
+                            {{#if isVisible}}
+                                <th {{#setTextAlign type}} {{/setTextAlign}} {{#ifEquals type 'spacer'}} class="spacer-column" {{/ifEquals}}>
+                                    {{label}}
+                                </th>
+                            {{/if}}
+                        {{/each}}
+                    </tr>
+                {{/if}}
+            </thead>
+            <tbody>
+                {{#each rows}}
+                <tr>
+                    {{#each columnGroup}}
+                        {{#each columns}}
+                            {{#if isVisible}}
+                                {{#ifEquals type 'photo'}}
+                                     <td class="photoColumn">
+                                        <img src="{{value}}"  width="45px" height="45px"></img>
+                                    </td>
+                                {{else}}
+                                    <td {{#setTextAlign type}} {{/setTextAlign}} >
+                                        <span class="{{styleClass}}">
+                                            {{formatValue value type}}
+                                        </span>
+
+                                    </td>
+                                {{/ifEquals}}
+                            {{/if}}
+                        {{/each}}
+                             
+                        <!-- add a spacer column -->
+                        <td style="background-color: white; width:45px;"></td> 
+                        
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+    
+    <script type="text/javascript">
+        google.load('visualization', '1', {'packages':['corechart', 'bar', 'table', 'linechart']});
+
+        google.setOnLoadCallback( chartAPIReady );
+        
+        var tableTemplate;
+        var tableWithPhotoTemplate;
+        var tableWithGroupedColumnsTemplate;
+        
+        
+        jQuery(document).ready(function($) {
+            
+            Handlebars.registerHelper('ifEquals', function(a, b, opts) {
+                if (a == b) {
+                    return opts.fn(this);
+                } else {
+                    return opts.inverse(this);
+                }
+            });
+            Handlebars.registerHelper('setTextAlign', function(a, opts) {
+                if ( a == 'number' || a == 'percent' ) {
+                    return  'style="text-align:right;"';
+                } else {
+                    return  'style="text-align:left;"';
+                }
+                
+            });
+            
+            
+             Handlebars.registerHelper('formatValue', function(num, formatAs, opts) {
+                // console.log('--- opts', opts);
+                if (formatAs == 'number' ) {
+                    return numeral(num).format('0,0');
+                } else if ( formatAs == 'percent' ) {
+                    return numeral(num).format('0,0.0%');
+                
+                } else {
+                    return num;
+                }
+            });
+            
+            tableTemplate = Handlebars.compile($("#tableTemplate").html());
+            tableWithGroupedColumnsTemplate = Handlebars.compile($("#tableWithGroupedColumnsTemplate").html());
+            
+            //  disable the manager filter select options
+            $('.disabled-select').prop('disabled', true); 
+            
+            // default time period to this month
+            $('select[id~="dateFilter"').prop('selected', true);
+            
+            $('#DashboardView').change(function () {
+                
+                var selectedViewValue = $(this).find("option:selected").val();
+                selectedView = _.find( dashboardViews, { name: selectedViewValue} );
+                
+                // hide all views
+                _.each( dashboardViews, function( item ) {
+                    if ( item.name != selectedView.name ) {
+                        $('#' + item.name).hide();
+                    }
+                } );
+                
+                // show selected view
+                $('#' + selectedView.name).show();
+            
+            	// show/hide manager filter
+            	if ( selectedView.name == 'DirectorSupernovaView' || 
+            			selectedView.name == 'DirectorTeamSupernovaView' ||
+            			selectedView.name == 'DirectorHypernovaView') {
+            		
+            		$('.disabled-select').prop('disabled', false); 
+            	
+            	} else {
+            	    $('.disabled-select').prop('disabled', true); 
+            	}
+            
+                var reportsToRun = selectedView.reports;
+                
+                _.each( reportsToRun, function( rpt ){
+                    runReportAsync( rpt, selectedView.name, dateFilter, managerFilter );
+                });
+                 
+            });
+
+        });
+        
+        function retrieveListOfUsers() {
+            // retrieve list of all salesforce users
+            //  used to populate the user's photo and any other user info
+            Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.SupernovaDashboard2Ctrl.getAllUsers}', 
+                    function( result, event) {
+                        //TODO: error checking
+                        userList = result;
+                    });
+          }
+        
+        // global variables
+        var userList = retrieveListOfUsers();
+        
+        
+        // global filter variables
+        var dateFilter = 'THIS_MONTH';
+        //var accountFilter = '';
+        //var accountExecFilter = 'none';
+        var managerFilter = 'none';
+        
+       
+        // TODO: store in custom setting or custom metadata type
+
+        //console.log('**** reports', reports);
+        function chartAPIReady( ) {
+            _.each( selectedView.reports , function( rpt ) {
+                runReportAsync( rpt, 'AccountExecutiveSupernovaView', dateFilter, managerFilter );
+            } );
+        }
+        
+        
+        
+         function runReportAsync(report, viewName, callback ){
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SupernovaDashboard2Ctrl.runReportAsync}',
+                report.name,
+                viewName,
+                dateFilter,
+                managerFilter,
+                function( reportInstanceId, event) {
+                    report.instanceId = reportInstanceId;
+                    isReportDataReady(reportInstanceId, report);
+                });
+        }
+        
+        
+        function sortColumnOrder( reportData ) {
+            // sort report data in array 
+            //  since each row is an array we have to sort by a particular
+            //  column number
+            var sortOrder = 'asc';
+            
+            _.each( reportData, function( item ) {
+                item.columns.sort(function(a, b) {
+                //console.log( a, b);
+                    var result;
+                    if ( sortOrder == 'desc') {
+                        result = a.order < b.order ? 1 : -1;
+                    } else {
+                        result = a.order > b.order ? 1 : -1;
+                    }
+                    return result;
+                });
+                
+            });
+            
+        }
+        
+        
+        
+        function sortData( reportData, order, columnNumber ) {
+            // sort report data in array 
+            //  since each row is an array we have to sort by a particular
+            //  column number
+            reportData.sort(function(a, b) {
+                    var result;
+                    if ( order == 'desc') {
+                        result = a.columns[columnNumber].value < b.columns[columnNumber].value ? 1 : -1;
+                    } else {
+                        result = a.columns[columnNumber].value > b.columns[columnNumber].value ? 1 : -1;
+                    }
+                    return result;
+                });
+        }
+        
+        function isReportDataReady(reportInstanceId, report) {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SupernovaDashboard2Ctrl.isReportDataReady}',
+                reportInstanceId,
+                function (result, event) {
+                    if (event.status) {
+                        if ( result.status == 'Running' || result.status == 'New') {
+                            isReportDataReady( reportInstanceId, report ); // restart the poll
+                        } else {
+                            // factMap is an object not an array
+                              //Team_Hypernova_Revenue_Chart
+                           
+                            
+                            
+                            //check to see if any results returned
+                            //  -- get the grand total row
+                            //  -- check to see if any of the totals are > 0
+                            var grandTotalRow = _.findWhere( result.reportResults.factMap, {key: 'T!T'} );
+                           	var anyTotals = _.reject( grandTotalRow.aggregates, function( item ){
+                                 if ( item.value == 0 || _.isUndefined( item.value ) ) {
+                                 	return true;
+                                 } else {
+                                 	return false;
+                                 }    
+                            });
+                            
+                            
+
+                            if( anyTotals.length > 0 ) {
+                        
+                                if ( report.visualizationType == 'table') {
+                                    result.data = formatDataForTable( result, report );
+                                    renderHtmlTable(report, result);
+
+                                } else if ( report.visualizationType == 'line-chart') {
+                                    result.data = formatDataForGViz( result, report );
+                                    renderGViz( report, result );
+                                }
+                                
+
+                            } else {
+                                // no data
+                                $('#' + report.renderTo).removeClass( 'loadingChart');
+                                $('#' + report.renderTo).html($('#noChartData').html());
+                            }
+                            
+                        }
+                       
+                    }
+                }, {escape: false, timeout: 30000, buffer: false});
+        }
+        
+        
+        
+        function renderGViz( report, result ) {
+            //console.log('-- result.data', result.data);
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Date');
+            dataTable.addColumn('number', 'Score');
+            dataTable.addRows( result.data );
+            
+            options = {
+                        title: '',
+                        hAxis: { slantedText: true, slantedTextAngle: 80 },
+                        legend:{ position: 'none' },
+                        height: 300,
+                        chartArea: { left: 30, top: 30, width: '95%' }
+                    };
+                    
+            $('#' + report.renderTo).removeClass('loadingChart');
+
+            var chartView = new google.visualization.DataView(dataTable);
+            var chart = new google.visualization.LineChart(document.getElementById(report.renderTo));
+            chart.draw(chartView, options);
+            
+        }
+        
+        function formatDataForGViz( result, report ) {
+            // format data for google visualizations
+            var reportData = new Array();
+            var groupingVals = _.reject( result.reportResults.groupingsAcross.groupings, function( item ) {
+                 if ( item.label == '-' || _.isUndefined( item.value ) ) {
+                    return true; 
+                 } else {
+                     return false;
+                 }
+            });    
+                
+            _.each( groupingVals, function(item) {
+                // get the data
+                var fmItem = _.findWhere( result.reportResults.factMap, {key: 'T!' + item.key} );
+                
+                var itemLabel = item.label;
+                if ( report.trimDateLabel ) {
+                    // abbreviate dates ie September = Sep
+                    itemLabel = itemLabel.substring(0,3) + '  ' + itemLabel.substring( item.label.indexOf(' '), item.label.length)
+                }
+
+                var val = fmItem.aggregates[0].value;
+                var dataRow = [ itemLabel, val ]; // TODO: ???
+                reportData.push( dataRow);    
+            });
+            return reportData;         
+        }
+        
+        function formatDataForTable( result, report ) {
+            // format data for html table visualizations
+            
+            var reportData = new Array();
+
+            // filter out grouping rows that are empty
+            //  --- because of bad data, groups can be null or empty or contain a dash
+            var groupingVals = _.reject( result.reportResults.groupingsDown.groupings, function( item ) {
+                                        return item.label === '-';
+                                    } );
+            
+            _.each( groupingVals, function(item) {
+                var reportDataRow = { columns: [] };
+                
+                // add group/row label
+                reportDataRow.columns.push( { name: 'rowLabel', value: item.label, isVisible: true, styleClass: '', order: 0 } );
+              
+                // get the data
+                // :mm changed to result.reportResults
+                var fmItem = _.findWhere( result.reportResults.factMap, {key: item.key+'!T'} );
+              
+                // aggregates is an array.  each item in the array is a column of value, label
+                //   lookup columns settings in the report definition
+                //   lookup column names in the report metadata
+                _.each( fmItem.aggregates, function(aggregate, index){
+                    // column names are store in the report metadata
+                    var columnName = result.reportResults.reportMetadata.aggregates[index];
+                    // remove the leading s! from column names
+                    columnName = columnName.slice(columnName.indexOf('!')+1);
+                    var columnProperties = _.find( report.columns, { name : columnName } );
+                    reportDataRow.columns.push( { name : columnName, value : aggregate.value, isVisible : columnProperties.isVisible, type : columnProperties.type, styleClass: columnProperties.styleClass, order: columnProperties.order  } );        
+                });
+                reportData.push( reportDataRow );
+            });
+            
+            sortData( reportData, report.sortOrder, report.sortColumnNumber );
+            
+            // apply column order
+            sortColumnOrder( reportData );
+            
+            
+            // check to see if the report options say we want to limit the number of rows displayed
+            if ( report.rowLimit > 0 ) {
+                reportData = reportData.slice(0, report.rowLimit);
+            }
+            return reportData;
+            
+        }
+        
+        
+        function renderHtmlTable( report, result ) {
+            var html;
+            // add photo url, if specified
+            if ( report.displayUserPhoto ) {
+                    _.each( result.data, function( item ) {
+                       // console.log('-- item', item);
+                        // find the user by name in our user Map
+                        var found = _.find( userList, function( u ) {
+                            return u.Name == item.columns[0].value;  // first element in item array is name
+                        });
+                        
+                        if (found) item.columns.unshift( { name: 'photoUrl', value: found.SmallPhotoUrl, type: 'photo', isVisible: true } );
+                    } );
+            }
+            
+            
+            if( report.groupColumns ) {
+                // split into x columns and render each separately
+                //   or add a column number to the data and handle it in the view template
+                
+                var groupedData = new Array();
+                var rowsPerColumn = Math.ceil( result.data.length / report.numberOfGroupColumns );
+
+                //groupedData.push( { columnGroup: [{},{},{}] } );
+                
+                var columnNum = 0;
+                var rowNum = 0;
+                // create column groupings
+                _.each( result.data, function( item, index) {
+                    // add a row if it does not exist
+                    if( groupedData[rowNum] == null ) groupedData.push( { columnGroup: [] } );
+                    groupedData[rowNum].columnGroup[columnNum] = item;
+                    rowNum++;
+                    if( index != 0  && (index+1) % rowsPerColumn == 0) {
+                        columnNum++;
+                        rowNum = 0;
+                    }
+                });
+
+
+                //console.log('-- report', report.name);
+                //if ( report.name == 'Compliance') {
+                    //console.log('--- groupedData', groupedData );
+                    
+                    // user result report data to build a columnHeading object
+                    //# number of column groupings
+                    var numberOfColumnGroupings = groupedData[0].columnGroup.length;
+                    //console.log('# cols', numberOfColumnGroupings);
+                    
+                    var tableHeadings = new Array();
+                    // build gouped column headings
+                    for ( i=0; i<numberOfColumnGroupings; i++ ) {
+                        // go through each column and add to table heading
+                        tableHeadings.push( {name: '', label: '', type: 'photo', order: 0, isVisible: true } );
+                        _.each( report.columns, function( col ) {
+                            tableHeadings.push( col );
+                        });
+                        tableHeadings.push( {name: '', label: '', type: 'spacer', isVisible: true});
+                    }
+                    //console.log('-- tableHeading', tableHeadings);
+                // }
+
+
+                result.data = groupedData;
+                
+                html = tableWithGroupedColumnsTemplate({rows: result.data, columnNames: report.columns, showTableHeading: report.showTableHeading, tableHeadings: tableHeadings});
+            } else {
+                html = tableTemplate({rows: result.data, columnNames: report.columns, showTableHeading: report.showTableHeading, displayUserPhoto: report.displayUserPhoto});
+            
+            }
+            
+            $('#' + report.renderTo).removeClass('loadingChart');
+            $('#' + report.renderTo ).html(html);
+        }
+        
+       
+        
+        function mapColumnNames( resultColumnNames, reportColumnNames ){
+            var columnNames = new Array();
+            
+            // add the group row label column - it's the first entry in the report.columns array
+            columnNames.push(reportColumnNames[0]);
+
+            // match remaing columns
+            _.each( resultColumnNames, function(itemToFind) {
+                var foundItem = _.find( reportColumnNames, function( item ){
+                    if ( 's!' + item.name == itemToFind || item.name == 'RowCount' ) {
+                        return item;
+                    }
+                });
+                if ( foundItem ) { 
+                    columnNames.push( foundItem );
+                }
+            });
+            return columnNames;
+        }
+
+        
+        function applyFilter() {
+             dateFilter = document.getElementById('{!$Component.filterForm.dateFilter}').value;
+             managerFilter = document.getElementById('{!$Component.filterForm.managerFilter}').value;
+             
+             refreshAllCharts(  );
+        }
+        
+        function clearFilters() {
+             // set filters to empty
+             $(document.getElementById('{!$Component.filterForm.dateFilter}')).val( 'none');
+             $(document.getElementById('{!$Component.filterForm.managerFilter}')).val( 'none');
+
+             managerFilter = 'none';
+             dateFilter = 'none';
+             refreshAllCharts( );
+        }
+        
+         function refreshAllCharts( ) {
+            _.each( selectedView.reports , function( rpt ) {
+                // show load chart data
+                rpt.reportInstanceId = null;
+                $('#' + rpt.renderTo ).html('');
+                $('#' + rpt.renderTo ).addClass('loadingChart');
+                runReportAsync( rpt, selectedView.name, dateFilter, managerFilter );
+            } );
+            
+        }
+ 
+    </script>
+    
+    
+    <div id="app" class="bs">
+        <div class="row" style="margin-bottom: 2em;">
+            <select id="DashboardView" class="form-control" style="width:20em;font-size:1.2em;">
+               <option value="AccountExecutiveSupernovaView">Account Executive Supernova</option>
+                <option value="DirectorSupernovaView">Director Supernova</option>
+                <option value="VicePresidentSupernovaView">Vice President Supernova</option>               
+                <option value="DirectorTeamSupernovaView">Director Team Supernova</option>
+                <option value="VicePresidentTeamSupernovaView">Vice President Team Supernova</option>
+                <option value="AccountExecutiveHypernovaView">Account Executive Hypernova</option>
+                <option value="DirectorHypernovaView">Director Hypernova</option>                
+                <option value="VicePresidentHypernovaView">Vice President Hypernova</option>                
+                <option value="TeamHypernovaView">Team Hypernova</option>             
+            </select>
+        </div>
+        
+        <div class="row">
+                <div style="background-color: #00000;padding:.25em;">
+                    <apex:form id="filterForm"  styleClass="form-inline">
+                        <div class="form-group">
+                            <span style="margin-right:.5em;font-weight:bold;">Time Period</span>
+                            <apex:selectList value="{!defaultTimePeriod}" styleClass="form-control" style="width: auto;" id="dateFilter" size="1" >
+                                <apex:selectOption itemValue="none" itemLabel="--None--"></apex:selectOption> 
+                                <apex:selectOption itemValue="THIS_MONTH" itemLabel="This Month"></apex:selectOption> 
+                                <apex:selectOption itemValue="THIS_QUARTER" itemLabel="This Quarter"></apex:selectOption>
+                                <apex:selectOption itemValue="THIS_YEAR" itemLabel="This Year"></apex:selectOption>
+                                <apex:selectOption itemValue="LAST_MONTH" itemLabel="Last Month"></apex:selectOption>
+                                <apex:selectOption itemValue="LAST_QUARTER" itemLabel="Last Quarter"></apex:selectOption>
+                                <apex:selectOption itemValue="LAST_YEAR" itemLabel="Last Year"></apex:selectOption>
+                            </apex:selectList>
+                            
+							<span style="margin-right:.5em;margin-left:2em;font-weight:bold;">Director</span> 
+							<apex:selectList styleClass="form-control disabled-select" size="1" style="width:auto;" id="managerFilter"> 
+								<apex:selectOptions value="{!managerOptions}"></apex:selectOptions>
+							</apex:selectList>
+
+                        </div>
+
+                        <div class="form-group" style="margin-left:2em;">
+                            <apex:commandButton reRender="none" value="Apply" onClick="applyFilter();" styleClass="btn btn-primary btn-sm"></apex:commandButton>
+                            <span style="margin-left:.5em;"></span>
+                            <apex:commandButton reRender="none" value="Clear" onClick="clearFilters();" styleClass="btn btn-default btn-sm"></apex:commandButton>
+                        </div>
+        
+                        <!-- if we do not use clearfix then the filter form disappears -->
+                        <div class="clearfix"></div>
+                    </apex:form>
+                </div>
+        </div>
+        
+        <c:SNDBAccountExecHypernovaView ></c:SNDBAccountExecHypernovaView>
+        <c:NewSNDBDirectorSupernovaView ></c:NewSNDBDirectorSupernovaView>
+        <c:SNDBVicePresidentHypernovaView ></c:SNDBVicePresidentHypernovaView>
+        <c:SNDBTeamHypernovaView ></c:SNDBTeamHypernovaView>
+        <c:SNDBVicePresidentTeamSupernovaView ></c:SNDBVicePresidentTeamSupernovaView>
+        <c:SNDBDirectorTeamSupernovaView ></c:SNDBDirectorTeamSupernovaView>
+        <c:NewSNDBAccountExecutiveSupernovaView ></c:NewSNDBAccountExecutiveSupernovaView>
+        <c:NewSNDBVicePresidentSupernovaView ></c:NewSNDBVicePresidentSupernovaView>
+        <c:SNDBDirectorHypernovaView ></c:SNDBDirectorHypernovaView>
+        
+        <!-- 
+            div displayed when there is no chart data 
+        -->
+        <div id="noChartData" style="display:none;">
+            <div class="text-center noChartData">
+                <h2 style="display:block;">No Data Found</h2>
+                <h3>Please change filter criteria.</h3>
+            </div>
+        </div>
+        
+    </div>  
+    
+<script type="text/javascript">
+    // this javascript must stay at the bottom of the page
+    //  because it depends on javascript in page components
+    
+    var dashboardViews = new Array(
+        {
+            name: 'AccountExecutiveSupernovaView',
+            reports: accountExecutiveSupernovaReports
+        },
+        {
+            name: 'DirectorSupernovaView',
+            reports: directorSupernovaReports
+        },
+        {
+            name: 'AccountExecutiveHypernovaView',
+            reports: accountExecutiveHypernovaReports
+        }, 
+        {
+            name: 'DirectorHypernovaView',
+            reports: directorHypernovaReports
+        },
+        {
+            name: 'VicePresidentHypernovaView',
+            reports: vicePresidentHypernovaReports
+        },
+        {
+            name: 'TeamHypernovaView',
+            reports: teamHypernovaReports
+        },
+        {
+            name: 'VicePresidentTeamSupernovaView',
+            reports: vicePresidentTeamSupernovaReports
+        },
+        {
+            name: 'DirectorTeamSupernovaView',
+            reports: directorTeamSupernovaReports
+        },
+        {
+            name: 'VicePresidentSupernovaView',
+            reports: vicePresidentSupernovaReports
+        });
+
+
+    var selectedView = dashboardViews[0];
+    
+</script>
+    
+  
+    
+</apex:page>

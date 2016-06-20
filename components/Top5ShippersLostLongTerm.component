@@ -1,0 +1,45 @@
+<apex:component controller="Top5ShippersLostCtrl" >
+
+<apex:attribute name="reportFilters" type="String" description="this is the report filter of the dashboard" assignTo="{!ReportFIlter}" access="public"/>
+  <apex:includeScript value="https://www.google.com/jsapi"/>
+    <script type="text/javascript">
+            google.load("visualization", "1", {packages:["table"]});
+      google.setOnLoadCallback(drawSLTable);
+
+            function drawSLTable() {
+            
+              
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.Top5ShippersLostCtrl.getTop5ShippersLost}',
+            {!ReportFIlter},
+            'Long Term',
+            function(result, event){
+                if (event.status) {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Shipper Name');
+                  data.addColumn('string', 'State');
+                  data.addColumn('number', 'LT Change');
+                    
+                  var tablerows = [];
+                  for(var i = 0; i < result.length; i ++)
+                  {
+                     tablerows[i] = [result[i].shipperName, result[i].shipperState, result[i].totalRevenue]; 
+                  }
+                  data.addRows(tablerows);
+                  //alert(tablerows[0]);
+                  //alert(tablerows[1]);
+                  var formatter = new google.visualization.NumberFormat(
+                 {negativeColor: 'red', negativeParens: true, pattern: '$###,###'});
+                formatter.format(data, 2); 
+                  var table = new google.visualization.Table(document.getElementById('Top5ShippersLostLongTerm_div'));
+                  table.draw(data, {showRowNumber: true});
+
+                } 
+            }, 
+            {escape: true}
+        );          
+        }
+
+    </script>
+    <div id="Top5ShippersLostLongTerm_div"></div> 
+</apex:component>

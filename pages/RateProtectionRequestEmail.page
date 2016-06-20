@@ -1,0 +1,100 @@
+<apex:page standardController="Rate_Protection_Request__c" showHeader="false" renderAs="pdf" extensions="RateProtectionRequestVFEmailController" tabStyle="Account">
+    <div style="font-weight:bold;width=700;font-size:13px">
+        FOR ANY SHIPMENT THAT QUALIFIES AS A VOLUME SHIPMENT, YOU MUST CONTACT SPECIALTY SALES<br/>
+        FOR A VOLUME QUOTE. A VOLUME SHIPMENT IS DEFINED AS:
+        <div style="padding:10px">
+            A. A SHIPMNET THAT OCCUPIES 10 LINEAR FEET OR MORE, OR<br />
+            B. A SHIPMENT THAT OCCUPIES 5 PALLET POSITIONS OR MORE, OR<br />
+            C. A SHIPMENT THAT WEIGHS 7,000 LBS OR MORE<br/>
+        </div>
+        DO NOT SEND A RATE PROTECTION FOR A VOLUME SHIPMENT TO THE PRICING DEPT WITHOUT FIRST<br/>
+        GETTING A VOLUME RATE QUOTE FROM SPECIALTY SALES.
+    </div>
+    <div style="padding-top:20px;font-size:14px">
+        <table width="700" border="1" cellpadding="0" cellspacing="0">
+            <tr>
+                <td style="font-weight:bold;font-size:16px;padding-left:20px;">Rate Protection</td>
+            </tr>
+        </table>
+        <br />
+        <table width="700">
+            <tr>
+                <td style="font-weight:bold;width:170px;">Volume Quote #:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Volume_Quote__c}"/></td>
+                <td style="font-weight:bold;width:100px;">Volume Price:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Volume_Price__c}"/></td>  
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:100px;">Pro #:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Probill__c}"/></td>
+                <td style="font-weight:bold;width:100px;">Pro Date:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Probill_Datex__c}"/></td>  
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:100px;">Acct #:</td>
+                <td colspan="3">
+                    <apex:outputField value="{!RateProtectionRequest.Account__r.DYLT_Account__c}" rendered="{!isAccountOrLead}"/>
+                    <apex:outputField value="{!RateProtectionRequest.Lead__r.TruckMate_Id__c}" rendered="{!NOT(isAccountOrLead)}"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:100px;">Acct Name:</td>
+                <td colspan="3">
+                    <apex:outputField value="{!RateProtectionRequest.Account__r.Name}" rendered="{!isAccountOrLead}"/>
+                    <apex:outputField value="{!RateProtectionRequest.Lead__r.Company}" rendered="{!NOT(isAccountOrLead)}"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:100px;">Origin (City, State, Zip):</td>
+                <td colspan="3"><apex:outputField value="{!RateProtectionRequest.Origin_City_State_Zip__c}"/></td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:100px;">Destn (City, State, Zip):</td>
+                <td colspan="3"><apex:outputField value="{!RateProtectionRequest.Destination_City_State_Zip__c}"/></td>
+            </tr>
+        </table>
+        <br />
+        <table width="700">
+            <tr>
+                <td style="font-weight:bold">Pieces</td>
+                <td style="font-weight:bold">Weight in Lbs.</td>
+                <td style="font-weight:bold">Dimension (L" x W" x H")</td>
+                <td style="font-weight:bold">Freight Description &#39; Actual Class</td>
+                <td style="font-weight:bold">Stackable</td>
+            </tr>
+            <apex:repeat value="{!Freights}" var="item">
+                <tr>
+                    <td><apex:outputField value="{!item.Pieces__c}" style="width: 60px;"/></td>
+                    <td><apex:outputField value="{!item.Weight_in_Lbs__c}"/></td>
+                    <td><apex:outputField value="{!item.Dimension_L_x_W_x_H__c}"/></td>
+                    <td><apex:outputField value="{!item.Freight_Description_Actual_Class__c}" style="width: 180px;"/></td>
+                    <td><apex:outputField value="{!item.Stackable__c}"/></td>
+                </tr>
+            </apex:repeat>
+        </table>
+        <table width="700">
+            <tr>
+                <td style="font-weight:bold;width:270px;">Was this shipment W &#38; I&#39;d?:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Was_this_shipment_W_I_d__c}"/></td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;width:270px;">W &#38; I corrected amount:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.W_I_corrected_amount__c}"/></td>
+            </tr>
+        </table>
+        <table width="700">
+            <tr>
+                <td style="font-weight:bold;width:470px;">At the requested pricing, this shipment pays total charges of:</td>
+                <td><apex:outputField value="{!RateProtectionRequest.Requested_Pricing__c}"/></td>
+            </tr>
+        </table>
+        <table width="700">
+            <tr>
+                <td style="font-weight:bold;width:270px;">Notes/Justification:</td>
+            </tr>
+            <tr>
+                <td><apex:outputField value="{!RateProtectionRequest.Notes_Justification__c}"/></td>
+            </tr>
+        </table>
+    </div>
+</apex:page>

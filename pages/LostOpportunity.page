@@ -1,0 +1,4 @@
+<apex:page standardController="Opportunity">
+ <apex:image url="{!$Resource.optylost}" width="1596" height="60"/>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

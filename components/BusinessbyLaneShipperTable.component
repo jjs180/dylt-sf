@@ -1,0 +1,116 @@
+<apex:component controller="BusinessbyLaneShipperControlelr">
+	<apex:attribute name="reportFilters" type="String" description="this is the report filter of the dashboard" assignTo="{!ReportFIlter}" access="public"/>
+    <apex:includeScript value="https://www.google.com/jsapi"/>
+    
+    <style type="text/css">
+    	.table-font {font-size:8pt !important}
+    </style>
+    
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["table"]});
+        
+        
+        
+     	  google.setOnLoadCallback(drawBLSTableWithCatch);
+     	  
+     	  function drawBLSTableWithCatch()
+     	  {
+     	     try
+     	     {
+     	
+     	        drawBLSTable();
+     	     }
+     	     catch(e)
+     	     {
+     	     	  //console.log(e);
+     	     }
+     	  }
+     	  
+        function drawBLSTable() {  
+        	
+                      
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.BusinessbyLaneShipperControlelr.getShippers}',
+                {!ReportFilter},
+                function(result, event)
+                {
+	                // console.log(result);
+	                // console.log(event);
+                    if (event.status) 
+                    {
+                    	  var col = 3;                    	  
+                    	  
+							  var data = new google.visualization.DataTable();                  
+							  data.addColumn('string', 'State');
+							  data.addColumn('number', 'Revenue');
+							  data.addColumn('string', 'State');
+							  data.addColumn('number', 'Revenue');
+							  data.addColumn('string', 'State');
+							  data.addColumn('number', 'Revenue');
+                    
+                       var tablerows = [];
+                       var rowCount = Math.ceil(result.length / col);
+							  for(var i = 0; i < result.length; i ++)
+							  {							  	  
+							  	  //var row = Math.floor(i / col);							  	  
+							  	  var colInd = Math.floor(i / rowCount);
+							  	  var row = i - (rowCount * colInd);										  	    	  							  	 
+							  	  //console.log(row);
+							  	  
+							  	  if(colInd == 0)
+							  	  {
+							  	  	  tablerows[row] = new Array(6);
+							        tablerows[row][0] = result[i].ShipperStateCode;
+							        tablerows[row][1] = result[i].PaidAmount;
+							  	  }
+							  	  if(colInd == 1)
+							  	  {							  	  	  
+							        tablerows[row][2] = result[i].ShipperStateCode;
+							        tablerows[row][3] = result[i].PaidAmount;
+							  	  }
+							  	  else if(colInd == 2)
+							  	  {
+							  	  	  tablerows[row][4] = result[i].ShipperStateCode;
+							        tablerows[row][5] = result[i].PaidAmount;
+							  	  }							  	  
+							  	  
+							  	  /*if(i % col == 0)
+							  	  {
+							  	  	  tablerows[row] = new Array(6);
+							        tablerows[row][0] = result[i].ShipperStateCode;
+							        tablerows[row][1] = result[i].PaidAmount;
+							     }
+							     else if(i % col == 1)
+							     {
+							        tablerows[row][2] = result[i].ShipperStateCode;
+							        tablerows[row][3] = result[i].PaidAmount;
+							     } 
+							     else if(i % col == 2)
+							     {
+							        tablerows[row][2] = result[i].ShipperStateCode;
+							        tablerows[row][3] = result[i].PaidAmount;
+							     } */
+							     
+							     //console.log(tablerows);
+							  }
+						     data.addRows(tablerows);
+						     
+						    // console.log(data);
+
+                       var formatter = new google.visualization.NumberFormat({negativeColor: 'red', negativeParens: true, pattern: '$###,###'});
+                       formatter.format(data, 1); 
+                       formatter.format(data, 3); 
+                       formatter.format(data, 5); 
+                       
+                       var table = new google.visualization.Table(document.getElementById('businessbyLaneShipperTable_div'));
+                       
+                       //console.log(table);
+                       table.draw(data, {showRowNumber: false, width: '100%', height: '100%', cssClassNames: {headerRow: 'table-font', tableCell: 'table-font'}, sort: 'disable'});                                      
+                    } 
+                }, {escape: true}
+            );  // end remote action        
+        }
+    </script>
+    
+    <div id="businessbyLaneShipperTable_div" ></div>    
+</apex:component>

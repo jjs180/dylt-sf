@@ -1,0 +1,4 @@
+<apex:page standardController="Account">
+ <apex:image url="{!$Resource.aa}" width="1315" height="500"/>
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

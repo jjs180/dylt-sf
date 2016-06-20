@@ -1,0 +1,182 @@
+<apex:component >
+<div id="TeamHypernovaView" class="row" style="display:none;padding:2em 0em 2em 0em;">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#thgrid" role="tab" data-toggle="tab">Grid</a>
+        </li> 
+       <li role="presentation">
+            <a href="#thcategories" role="tab" data-toggle="tab">Categories</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+ 
+     <div role="tabpanel" class="tab-pane fade in active" id="thgrid">
+            <div class="container-fluid">
+                <div class="row">
+                    <div id="TM_Team_SuperNova_VP_Matrix" class="loadingChart"></div>
+                </div>
+            </div>
+        </div>
+    
+      <div role="tabpanel" class="tab-pane" id="thcategories">
+      <div class="container-fluid">
+        <div class="row">
+             <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Revenue and Quota Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Revenue_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Pipeline Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Pipeline_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Shippers Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Shippers_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+        
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Quality Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Quality_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Specialty Services Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Specialty_Services_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Avg Gauge the Web Score</div>
+                    <div class="panel-content">
+                        <div id="TM_Hypernova_Gauge_The_Web_Chart" class="loadingChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end Second Row -->
+   
+        </div>
+        <!-- end all Tabs -->
+    </div>
+   <!-- end container-fluid -->
+</div>
+   <!-- end tab-content -->
+
+   </div>
+
+
+        
+<script type="text/javascript">
+var teamHypernovaReports = new Array(
+    {
+                name : 'Team_SuperNova_VP_Matrix', 
+                renderTo: 'TM_Team_SuperNova_VP_Matrix',
+                instanceId: null,
+                rowLimit: 0,
+                sortOrder: 'desc',
+                sortColumnNumber: 7,
+                sortColumnName: '',
+                visualizationType: 'table',
+                displayUserPhoto: false,
+                //loadingChartClass: 'loadingChart500',
+                showTableHeading: true,
+                columns: [ 
+                            {name: 'rowLabel', label: 'Director Name', type: 'string', isVisible: true, order: 1},
+                            {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Avg Quota Score', type: 'number', isVisible: true, order: 2},
+                            {name: 'Supernova__c.Pipeline_Score__c', label: 'Avg Pipeline Score', type: 'number', isVisible: true, order: 3},
+                            {name: 'Supernova__c.Shippers_CM_and_Collections_Score__c', label: 'Avg Shippers Score', type: 'number', isVisible: true, order: 4},
+                            {name: 'Supernova__c.Quality_Score__c', label: 'Avg Quality Score', type: 'number', isVisible: true, order: 5},
+                            {name: 'Supernova__c.Specialty_Services_Score__c', label: 'Avg Specialty Services Score', type: 'number',  isVisible: true, order: 6},
+                            {name: 'Supernova__c.Gauge_The_Web_Score__c', label: 'Avg Gauge The Web Score', type: 'number', isVisible: true, order: 7},
+                            {name: 'Supernova__c.Total_Score__c', label: 'Avg Total Score', type: 'number', isVisible: true, order: 8},
+                            {name: 'Supernova__c.Total_Score_Rank__c', label: 'Rank', type: 'number', isVisible: false, order: 9},                           
+                            {name: 'RowCount', label: 'Count', isVisible: false, order: 10}
+                        ]   
+    
+    
+   }, {
+            name : 'Team_Hypernova_Revenue_Chart', 
+            renderTo: 'TM_Hypernova_Revenue_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.Revenue_Quota_Score__c', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+       },{
+            name : 'Team_Hypernova_Pipeline_Chart', 
+            renderTo: 'TM_Hypernova_Pipeline_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.xxxxxx', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+       },{
+            name : 'Team_Hypernova_Shippers_Chart', 
+            renderTo: 'TM_Hypernova_Shippers_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.xxxxxxxxx', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+       },{
+            name : 'Team_Hypernova_Quality_Chart', 
+            renderTo: 'TM_Hypernova_Quality_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.xxxxxxxxx', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+       },{
+            name : 'Team_Hypernova_Specialty_Services_Chart', 
+            renderTo: 'TM_Hypernova_Specialty_Services_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.xxxxxxxxx', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+       },{
+            name : 'Team_Hypernova_Gauge_The_Web_Chart', 
+            renderTo: 'TM_Hypernova_Gauge_The_Web_Chart',
+            instanceId: null,
+            visualizationType: 'line-chart',
+            trimDateLabel: true,
+            columns: [
+                        {name: 'rowLabel', label: 'AE Name', type: 'string', isVisible: true, order: 1},
+                        {name: 'Supernova__c.xxxxxxxxx', label: 'Score', type: 'number', isVisible: true, order: 2}
+                    ]
+        });
+       
+</script>
+     
+</apex:component>
