@@ -1,10 +1,9 @@
-@isTest(seeAllData = true)
+@isTest
 public class SendEmailWithCreditApplicationTest
 {
     @isTest
     public static void testSendEmail()
     {
-        //Lead lead = [select Id from Lead where IsConverted = false limit 1];
         Lead lead = new Lead(LastName = 'Test', Company = 'Acme', Email='test@abc.com');
         insert lead;
         

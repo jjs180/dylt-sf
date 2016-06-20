@@ -1,10 +1,13 @@
 @isTest
 public class testTop5ShippersCOntroler
 {
-    @isTest(seeAllData = true)
+    @isTest
     static void testController()
     {
-        Account testAcct =  [select Id from Account limit 1];
+        Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian983268';
+	 	testAcct.DYLT_Account__c = 'Lucian8927';
+	 	insert testAcct;
         
         Integer month = date.today().month();
         if(month < 4)
@@ -44,10 +47,5 @@ public class testTop5ShippersCOntroler
             Top5ShippersController.getTop5Shippers(filterCriteria);
         Test.stopTest();
         
-        
-        
-        
-        
-
     }
 }

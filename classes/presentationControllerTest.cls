@@ -1,9 +1,13 @@
 @isTest
 public class presentationControllerTest {
 
-    @isTest(seeAllData = true)
+    @isTest
     static void testController(){
-        Account testAcct =  [select Id from Account limit 1];
+        
+		Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian124568';
+	 	testAcct.DYLT_Account__c = 'Lucian1327';
+	 	insert testAcct;
        
         Integer month = date.today().month();
         if(month < 4){
@@ -48,11 +52,16 @@ public class presentationControllerTest {
         List<SelectOption> userOptions = controller.UserOptions;
     }
 
-	@isTest (seeAllData = true)
+	@isTest
 	static void testGetSelectedReports(){
 		presentationController testController = new presentationController();
-		Account testAcct =  [select Id from Account limit 1];
-		Presentation__c testPresentation = new Presentation__c(Account__c = testAcct.Id, Name = 'testPress', Reports__c = 'Business by Lane-Consignee');
+		
+		Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian904568';
+	 	testAcct.DYLT_Account__c = 'Lucian1328';
+	 	insert testAcct;
+       
+        Presentation__c testPresentation = new Presentation__c(Account__c = testAcct.Id, Name = 'testPress', Reports__c = 'Business by Lane-Consignee');
         insert testPresentation;
         List<String> reportsToPresent = new List<String>();
         reportsToPresent.add('report1');
@@ -61,10 +70,15 @@ public class presentationControllerTest {
         List<String> testReports = testController.getSelectedReports();
         //System.assertEquals('report1', testReports);
 	}
-	@isTest (seeAllData = true)	
+	@isTest
 	static void testGetReports(){
 		presentationController testController = new presentationController();
-		Account testAcct =  [select Id from Account limit 1];
+		
+		Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian904118';
+	 	testAcct.DYLT_Account__c = 'Lucian7328';
+	 	insert testAcct;
+       
 		Presentation__c testPresentation = new Presentation__c(Account__c = testAcct.Id, Name = 'testPress', Reports__c = 'Business by Lane-Consignee');
         insert testPresentation;
         String testId = testPresentation.id;
@@ -84,15 +98,17 @@ public class presentationControllerTest {
         return reports;		     
     }
 	
-	@isTest (seeAllData = true)
+	@isTest
 	static void testDateOptions(){
 		presentationController testController = new presentationController();
 		List<SelectOption> testResults = new List<SelectOption>();
 		testResults.add(new SelectOption('', '--None--'));
         testResults.add(new SelectOption('This Quarter', 'This Quarter'));
         testResults.add(new SelectOption('This Year', 'This Year'));
-       // List<SelectOption> testResults = testController.DateOptions();
-		
+        // List<SelectOption> testResults = testController.DateOptions();
+        
+        List<SelectOption> auxList = testController.ManagerOptions;
+		auxList = testController.CategoryOptions;
 	}
 	
 	

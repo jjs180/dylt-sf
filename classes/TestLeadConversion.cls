@@ -1,4 +1,4 @@
-@isTest(SeeAllData=true)
+@isTest
 public class TestLeadConversion {
 
  
@@ -9,8 +9,8 @@ public class TestLeadConversion {
     
       
     Account acct = new Account();
-      acct.DYLT_Account__c = '1234512345';
-      acct.name = 'Test Test';
+      acct.DYLT_Account__c = '9346289200';
+      acct.name = 'Lucian131687';
       
       Lead thelead=new Lead(LastName='Doe',email = 'test@test.com',FirstName='John',Company='Test',Status='Inquiry', PostalCode='90099',TruckMate_Id__c = '1234512345');
       //thelead.firstname = 'test';

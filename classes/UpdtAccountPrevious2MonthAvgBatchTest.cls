@@ -56,12 +56,5 @@ private class UpdtAccountPrevious2MonthAvgBatchTest {
     	
     	System.assertEquals(accntUpdated.Previous_2_Months_Avg__c, 500);
     	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
     }
 }

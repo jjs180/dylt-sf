@@ -1,10 +1,14 @@
 @isTest
 public class testTop5ConsigneesController
 {
-    @isTest(seeAllData = true)
+    @isTest
     static void testController()
     {
-        Account testAcct =  [select Id from Account limit 1];
+        Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian123268';
+	 	testAcct.DYLT_Account__c = 'Lucian0327';
+	 	insert testAcct;
+	 	
         Integer month = date.today().month();
         if(month < 4)
         {

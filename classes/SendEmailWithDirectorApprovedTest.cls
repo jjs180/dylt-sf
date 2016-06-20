@@ -1,10 +1,18 @@
-@isTest(seeAllData=true)
+@isTest
 public class SendEmailWithDirectorApprovedTest
 {
     @isTest
     public static void testSendEmail()
     {
-        Account acc = [select Id from Account limit 1];
+        SendEmailWithRateProtection__c emailaddr = new SendEmailWithRateProtection__c();
+        emailaddr.Email__c = 'lucian.ciobanu@deutoria.com';
+        emailaddr.Name = 'Recipient';
+        insert emailaddr;
+        
+        Account acc = new Account();
+	 	acc.Name = 'Lucian125668';
+	 	acc.DYLT_Account__c = 'Lucian0367';
+	 	insert acc;
         
         Rate_Protection_Request__c rate = new Rate_Protection_Request__c(Account__c = acc.Id, Status__c = 'Director Approved', Probill__c = '123');
         

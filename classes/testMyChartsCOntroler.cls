@@ -1,10 +1,14 @@
 @isTest
 public class testMyChartsCOntroler
 {
-    @isTest(seeAllData = true)
+    @isTest
     static void testController()
     {
-        Account testAcct =  [select Id from Account limit 1];
+        Account testAcct = new Account();
+	 	testAcct.Name = 'Lucian177268';
+	 	testAcct.DYLT_Account__c = 'Lucian0027';
+	 	insert testAcct;
+        
         Integer month = date.today().month();
         if(month < 4)
         {
@@ -35,5 +39,8 @@ public class testMyChartsCOntroler
         controller.DateFilterOption = 'this quarter';
         controller.TerritoryUser = userinfo.getUsername();
         controller.setNewReportFilters();
+        
+        List<SelectOption> auxList = controller.ManagerOptions;
+        auxList = controller.CategoryOptions;
     }
 }
