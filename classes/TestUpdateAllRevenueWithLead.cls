@@ -13,6 +13,7 @@ public class TestUpdateAllRevenueWithLead
 	 	l.LastName = 'Lucian175284';
 	 	l.Company = 'Lucian110934';
 	 	l.TruckMate_Id__c = 'Lucian1998';
+	 	l.Lead_Stage__c = '1 - Identification';
 	 	insert l;
 	 	
 	 	Test.startTest();

@@ -12,7 +12,7 @@ public class TestLeadConversion {
       acct.DYLT_Account__c = '9346289200';
       acct.name = 'Lucian131687';
       
-      Lead thelead=new Lead(LastName='Doe',email = 'test@test.com',FirstName='John',Company='Test',Status='Inquiry', PostalCode='90099',TruckMate_Id__c = '1234512345');
+      Lead thelead=new Lead(LastName='Doe',email = 'test@test.com',FirstName='John',Company='Test',Status='Inquiry', PostalCode='90099',TruckMate_Id__c = '1234512345', Lead_Stage__c = '1 - Identification');
       //thelead.firstname = 'test';
       //thelead.lastname = 'test';
       //thelead.email = 'test@test.com';
