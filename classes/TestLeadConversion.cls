@@ -1,7 +1,7 @@
 @isTest
 public class TestLeadConversion {
 
- 
+  /* Lucian Ciobanu - commented out, I could not figure out what class / trigger it should cover
   @isTest
   private static void testBatch()
   {
@@ -35,7 +35,7 @@ public class TestLeadConversion {
     Test.stopTest();
     
     
-  }
+  }*/
 
 
 }

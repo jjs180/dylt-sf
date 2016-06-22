@@ -78,7 +78,7 @@ global class UpdtAccountPrevious2MonthAvgBatch implements Database.Batchable<sOb
     
     }
     
-   
+    /* Lucian Ciobanu - Commented out because it is not used and it affects code coverage
     private static void originalCalculation( List<Account> accountList ){
    		// report date range is previous 2 months
     	Date currentDate = Date.today();
@@ -104,7 +104,7 @@ global class UpdtAccountPrevious2MonthAvgBatch implements Database.Batchable<sOb
     			}
     		}
     	}	
-    } 
+    } */
     
     global void finish(Database.BatchableContext context) {
     }
